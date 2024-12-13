@@ -1,0 +1,29 @@
+package mylie.async;
+
+public final class Functions {
+    private Functions() {}
+
+    public abstract static class F0<R, O> extends Function {
+        protected F0(String name) {
+            super(name);
+        }
+
+        protected abstract R run(O o);
+    }
+
+    abstract class F1<R, O, P1> extends Function {
+        protected F1(String name) {
+            super(name);
+        }
+
+        protected abstract R run(O o, P1 p1);
+    }
+
+    abstract class F2<R, O, P1, P2> extends Function {
+        protected F2(String name) {
+            super(name);
+        }
+
+        protected abstract R run(O o, P1 p1, P2 p2);
+    }
+}
