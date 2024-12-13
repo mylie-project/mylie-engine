@@ -1,8 +1,8 @@
 package mylie.util.versioned;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * This class contains tests for the method `value()` of the `AutoIncremented` class,
@@ -13,7 +13,7 @@ public class AutoIncrementedTest {
 
     @Test
     public void whenValueCalledWithoutArgument_thenSameObjectIsReturned() {
-        AutoIncremented<String> autoIncrement = new AutoIncremented<String>("initial");
+        AutoIncremented<String> autoIncrement = new AutoIncremented<>("initial");
         assertEquals("initial", autoIncrement.value());
     }
 
@@ -68,7 +68,6 @@ public class AutoIncrementedTest {
 
         assertEquals(1, versionAfterUpdate);
     }
-
 
     @Test
     public void whenReferenceIsCreated_thenValueAndVersionMatchParent() {

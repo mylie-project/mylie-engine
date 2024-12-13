@@ -11,7 +11,7 @@ import lombok.Getter;
  *
  * @param <T> The type of the value being versioned.
  */
-public sealed interface Versioned<T> permits AutoIncremented{
+public sealed interface Versioned<T> permits AutoIncremented {
 
     /**
      * Retrieves the current value of the entity, ensuring it is up-to-date

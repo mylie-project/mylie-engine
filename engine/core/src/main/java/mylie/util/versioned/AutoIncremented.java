@@ -7,7 +7,7 @@ package mylie.util.versioned;
  * @param <T> The type of the value to be stored and tracked by the entity.
  */
 public final class AutoIncremented<T> implements Versioned<T> {
-    boolean updateIfEqual=false;
+    boolean updateIfEqual = false;
     long version = 0;
     T value;
 
@@ -30,7 +30,7 @@ public final class AutoIncremented<T> implements Versioned<T> {
      * @param updateIfEqual A boolean indicating whether the version should be updated
      *                      when the assigned value is equal to the current value.
      */
-    public AutoIncremented(T value,boolean updateIfEqual) {
+    public AutoIncremented(T value, boolean updateIfEqual) {
         this(value);
         this.updateIfEqual = updateIfEqual;
     }
@@ -54,16 +54,16 @@ public final class AutoIncremented<T> implements Versioned<T> {
      */
     @Override
     public Versioned<T> value(T value) {
-        boolean update=false;
-        if(value==null){
-            if(this.value==null){
-                if(updateIfEqual){
-                    update=true;
+        boolean update = false;
+        if (value == null) {
+            if (this.value == null) {
+                if (updateIfEqual) {
+                    update = true;
                 }
-            }else{
-                update=true;
+            } else {
+                update = true;
             }
-        }else{
+        } else {
             update = updateIfEqual || !value.equals(this.value);
         }
         this.value = value;
