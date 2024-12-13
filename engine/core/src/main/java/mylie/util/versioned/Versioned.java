@@ -27,7 +27,6 @@ public sealed interface Versioned<T> permits AutoIncremented {
      * @param value The new value of type T to be assigned to the versioned entity.
      * @return The updated instance of Versioned containing the new value.
      */
-    @SuppressWarnings("UnusedReturnValue")
     Versioned<T> value(T value);
 
     /**

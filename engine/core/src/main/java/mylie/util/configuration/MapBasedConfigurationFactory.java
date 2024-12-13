@@ -13,7 +13,7 @@ public class MapBasedConfigurationFactory<S> extends ConfigurationFactory<S> {
 
     @Override
     public Configuration<S> configuration() {
-        return new Configuration<>();
+        return new MapConfiguration<>();
     }
 
     @Override
@@ -26,7 +26,7 @@ public class MapBasedConfigurationFactory<S> extends ConfigurationFactory<S> {
         return new Option<>(storeSupplier, defaultValue);
     }
 
-    static final class Option<T, S> extends mylie.util.configuration.Configuration.Option<T, S> {
+    private static final class Option<T, S> extends mylie.util.configuration.Configuration.Option<T, S> {
         @Getter(AccessLevel.PACKAGE)
         private final T defaultValue;
 
@@ -41,19 +41,19 @@ public class MapBasedConfigurationFactory<S> extends ConfigurationFactory<S> {
         }
     }
 
-    static final class Configuration<S> extends mylie.util.configuration.Configuration<S> {
+    private static final class MapConfiguration<S> extends mylie.util.configuration.Configuration<S> {
         private final Map<Option<?, S>, Object> store = new HashMap<>();
 
-        private Configuration() {}
+        private MapConfiguration() {}
 
         @Override
         <T> void set(Option<T, S> option, T value) {
             store.put(option, value);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         <T> T get(Option<T, S> option) {
-            //noinspection unchecked
             T o = (T) store.get(option);
             if (o == null) {
                 o = (((MapBasedConfigurationFactory.Option<T, S>) option).defaultValue());
