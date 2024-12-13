@@ -21,7 +21,7 @@ public abstract class Scheduler {
         Async.scheduler(this);
     }
 
-    public void version(long version){
+    public void version(long version) {
         caches.forEach(c -> c.clear(version));
     }
 

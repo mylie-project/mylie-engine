@@ -23,7 +23,35 @@ public class Async {
         return result;
     }
 
-    public static void await(Result<?> ...results) {
+    public static <R, O, P0> Result<R> async(
+            ExecutionMode executionMode, long version, Functions.F1<R, O, P0> function, O object, P0 param0) {
+        int hashCode = hash(function, object);
+        Result<R> result = executionMode.cache().get(hashCode, version);
+
+        log.trace("Function<{}>({}) Hash={} Cache={}", function.name(), object, hashCode, result != null);
+        if (result == null) {
+            result = executeTask(executionMode, hashCode, version, () -> function.run(object, param0));
+        }
+        return result;
+    }
+
+    public static <R, O, P0, P1> Result<R> async(
+            ExecutionMode executionMode,
+            long version,
+            Functions.F2<R, O, P0, P1> function,
+            O object,
+            P0 param0,
+            P1 param1) {
+        int hashCode = hash(function, object);
+        Result<R> result = executionMode.cache().get(hashCode, version);
+        log.trace("Function<{}>({}) Hash={} Cache={}", function.name(), object, hashCode, result != null);
+        if (result == null) {
+            result = executeTask(executionMode, hashCode, version, () -> function.run(object, param0, param1));
+        }
+        return result;
+    }
+
+    public static void await(Result<?>... results) {
         for (Result<?> result : results) {
             result.result();
         }
@@ -34,7 +62,7 @@ public class Async {
     }
 
     public static <R> Result<R> executeTask(ExecutionMode executionMode, int hash, long version, Supplier<R> supplier) {
-        Result<R> result = null;
+        Result<R> result;
         if (direct(executionMode)) {
             result = Results.fixed(hash, version, supplier.get());
             executionMode.cache().set(result);
@@ -57,6 +85,4 @@ public class Async {
         }
         return false;
     }
-
-
 }
