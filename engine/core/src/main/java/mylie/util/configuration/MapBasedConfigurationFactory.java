@@ -37,11 +37,11 @@ public class MapBasedConfigurationFactory<S> extends ConfigurationFactory<S> {
      * values in the configuration for a specific target.
      *
      * @param <T> The type of the value associated with the option.
-     * @return A newly created option of type {@link Configuration.Option}
+     * @return A newly created option of type {@link mylie.util.configuration.Option}
      *         with no default value set.
      */
     @Override
-    public <T> mylie.util.configuration.Configuration.Option<T, S> option() {
+    public <T> mylie.util.configuration.Option<T, S> option() {
         return new Option<>(storeSupplier);
     }
 
@@ -51,23 +51,23 @@ public class MapBasedConfigurationFactory<S> extends ConfigurationFactory<S> {
      *
      * @param <T> The type of the default value to be associated with this option.
      * @param defaultValue The default value of type {@code T} to be associated with the option.
-     * @return A new instance of {@link Configuration.Option} initialized
+     * @return A new instance of {@link mylie.util.configuration.Option} initialized
      *         with the specified default value and a store supplier.
      */
     @Override
-    public <T> mylie.util.configuration.Configuration.Option<T, S> option(T defaultValue) {
+    public <T> mylie.util.configuration.Option<T, S> option(T defaultValue) {
         return new Option<>(storeSupplier, defaultValue);
     }
 
     /**
-     * A specialized implementation of {@link Configuration.Option}
+     * A specialized implementation of {@link mylie.util.configuration.Option}
      * with support for an optional default value. This class associates a configuration option
      * with a specific type and allows the option to either have a default value or to be initialized without one.
      *
      * @param <T> The type of the value stored in this option.
      * @param <S> The type of the target associated with the configuration context.
      */
-    private static final class Option<T, S> extends mylie.util.configuration.Configuration.Option<T, S> {
+    private static final class Option<T, S> extends mylie.util.configuration.Option<T, S> {
         @Getter(AccessLevel.PACKAGE)
         private final T defaultValue;
 
@@ -110,7 +110,7 @@ public class MapBasedConfigurationFactory<S> extends ConfigurationFactory<S> {
      * @param <S> The type of the target object associated with configuration options.
      */
     private static final class MapConfiguration<S> extends mylie.util.configuration.Configuration<S> {
-        private final Map<Option<?, S>, Object> store = new HashMap<>();
+        private final Map<mylie.util.configuration.Option<?, S>, Object> store = new HashMap<>();
 
         /**
          * Initializes an instance of a map-based configuration used to manage configuration options.
@@ -128,7 +128,7 @@ public class MapBasedConfigurationFactory<S> extends ConfigurationFactory<S> {
          * @param value The value to be associated with the given option.
          */
         @Override
-        <T> void set(Option<T, S> option, T value) {
+        <T> void set(mylie.util.configuration.Option<T, S> option, T value) {
             store.put(option, value);
         }
 
@@ -144,7 +144,7 @@ public class MapBasedConfigurationFactory<S> extends ConfigurationFactory<S> {
          */
         @SuppressWarnings("unchecked")
         @Override
-        <T> T get(Option<T, S> option) {
+        <T> T get(mylie.util.configuration.Option<T, S> option) {
             T o = (T) store.get(option);
             if (o == null) {
                 o = (((MapBasedConfigurationFactory.Option<T, S>) option).defaultValue());

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class SchedulerNoThreads extends Scheduler implements Scheduler.TaskExecutor {
-    public SchedulerNoThreads() {
+public class SchedulerNoThreading extends Scheduler implements Scheduler.TaskExecutor {
+    public SchedulerNoThreading() {
         super(new GlobalCacheMap(new HashMap<>()));
         registerTarget(Target.Background, this);
     }

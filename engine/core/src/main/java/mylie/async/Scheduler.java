@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class Scheduler {
+
     private final GlobalCache globalCache;
     private final List<Cache> caches = new CopyOnWriteArrayList<>();
     private final Map<Target, TaskExecutor> targets = new HashMap<>();

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import mylie.util.configuration.Configuration;
 import mylie.util.configuration.ConfigurationFactory;
 import mylie.util.configuration.MapBasedConfigurationFactory;
+import mylie.util.configuration.Option;
 import org.junit.jupiter.api.Test;
 
 public class ConfigurationTest {
@@ -15,9 +16,9 @@ public class ConfigurationTest {
                 new MapBasedConfigurationFactory<>(TestObject::config);
 
         public interface Options {
-            Configuration.Option<String, TestObject> StringOption = Factory.option();
-            Configuration.Option<Integer, TestObject> IntegerOption = Factory.option();
-            Configuration.Option<Integer, TestObject> IntegerOptionNotNull = Factory.option(1);
+            Option<String, TestObject> StringOption = Factory.option();
+            Option<Integer, TestObject> IntegerOption = Factory.option();
+            Option<Integer, TestObject> IntegerOptionNotNull = Factory.option(1);
         }
 
         private final Configuration<TestObject> config = Factory.configuration();

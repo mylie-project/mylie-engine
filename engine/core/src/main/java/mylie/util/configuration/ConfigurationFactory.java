@@ -37,11 +37,11 @@ public abstract class ConfigurationFactory<S> {
      * with the target type {@code S}. The option does not have a default value set.
      *
      * @param <T> The type of the value that can be associated with the created option.
-     * @return A new {@link Configuration.Option} instance of type {@code T, S}, which
+     * @return A new {@link Option} instance of type {@code T, S}, which
      *         can be used to associate values of type {@code T} with a configuration
      *         for the target type {@code S}.
      */
-    public abstract <T> Configuration.Option<T, S> option();
+    public abstract <T> Option<T, S> option();
 
     /**
      * Creates and returns a new option instance for the configuration associated
@@ -51,9 +51,9 @@ public abstract class ConfigurationFactory<S> {
      * @param defaultValue The default value of type {@code T} to be associated with
      *                     the created option. This value will be used when no
      *                     specific value is set for the option.
-     * @return A new {@link Configuration.Option} instance of type {@code T, S},
+     * @return A new {@link Option} instance of type {@code T, S},
      *         which can be used to associate values of type {@code T} with a
      *         configuration for the target type {@code S}.
      */
-    public abstract <T> Configuration.Option<T, S> option(T defaultValue);
+    public abstract <T> Option<T, S> option(T defaultValue);
 }

@@ -12,6 +12,8 @@ public class Async {
     @Setter(AccessLevel.PACKAGE)
     private static Scheduler scheduler;
 
+    private static final ThreadLocal<Target> ThreadLocalTarget = new ThreadLocal<>();
+
     public static <R, O> Result<R> async(
             ExecutionMode executionMode, long version, Functions.F0<R, O> function, O object) {
         int hashCode = hash(function, object);
@@ -80,9 +82,18 @@ public class Async {
         if (executionMode.target() == Target.Background) {
             return true;
         }
-        if (executionMode.target().name().equals(Thread.currentThread().getName())) {
+        if (currentThread(executionMode.target())) {
             return true;
         }
         return false;
+    }
+
+    static void registerThread(Target target) {
+        ThreadLocalTarget.set(target);
+        Thread.currentThread().setName(target.name());
+    }
+
+    public static boolean currentThread(Target target) {
+        return ThreadLocalTarget.get() == target;
     }
 }
