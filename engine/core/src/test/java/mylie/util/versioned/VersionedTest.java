@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
  * which gets the value of the `AutoIncremented` object and increments the version
  * number if a new value is provided.
  */
-public class AutoIncrementedTest {
+public class VersionedTest {
 
     @Test
     public void whenValueCalledWithoutArgument_thenSameObjectIsReturned() {
