@@ -3,6 +3,7 @@ package mylie.async;
 import static mylie.async.Async.async;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import mylie.util.Exceptions;
@@ -15,7 +16,10 @@ public class SchedulerTest {
 
     static Stream<Scheduler> schedulerProvider() {
 
-        return Stream.of(new SchedulerNoThreading(), new SchedulerVirtualThreads());
+        return Stream.of(
+                new SchedulerNoThreading(),
+                new SchedulerExecutor(Executors.newVirtualThreadPerTaskExecutor()),
+                new SchedulerExecutor(Executors.newFixedThreadPool(1)));
     }
 
     @ParameterizedTest
@@ -318,6 +322,23 @@ public class SchedulerTest {
         assertEquals("Simulated exception", Exceptions.getRootCause(exception).getMessage());
     }
 
+    @ParameterizedTest
+    @MethodSource("schedulerProvider")
+    void shouldHandleNestedFunctions(Scheduler scheduler) {
+        Async.scheduler(scheduler);
+        AtomicInteger integer = new AtomicInteger(0);
+
+        ExecutionMode directMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
+        ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+
+        Async.await(
+                Async.async(asyncMode, 0, Nested1, integer),
+                Async.async(directMode, 0, atomicIntegerIncrease, integer),
+                Async.async(directMode, 0, atomicIntegerDecrease, integer));
+
+        assertEquals(3, integer.get());
+    }
+
     private static final Functions.F0<Boolean, AtomicInteger> atomicIntegerIncrease =
             new Functions.F0<>("AtomicIntegerIncrease") {
                 @Override
@@ -335,6 +356,29 @@ public class SchedulerTest {
                     return true;
                 }
             };
+
+    private static final Functions.F0<Boolean, AtomicInteger> Nested0 = new Functions.F0<>("AtomicIntegerDecrease") {
+        @Override
+        public Boolean run(AtomicInteger o) {
+            o.incrementAndGet();
+            Async.await(async(
+                    new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No),
+                    0,
+                    atomicIntegerIncrease,
+                    o));
+            return true;
+        }
+    };
+
+    private static final Functions.F0<Boolean, AtomicInteger> Nested1 = new Functions.F0<>("AtomicIntegerDecrease") {
+        @Override
+        public Boolean run(AtomicInteger o) {
+            Async.await(
+                    async(new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 0, Nested0, o));
+            o.incrementAndGet();
+            return true;
+        }
+    };
 
     private static final Functions.F0<Boolean, AtomicInteger> throwException = new Functions.F0<>("ThrowException") {
         @Override
