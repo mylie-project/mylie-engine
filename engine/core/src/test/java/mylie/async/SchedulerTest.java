@@ -397,6 +397,7 @@ public class SchedulerTest {
         ExecutionMode firstMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
         ExecutionMode secondMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
+        //noinspection unused
         Result<Boolean> result = Async.async(firstMode, 0, atomicIntegerIncrease, integer)
                 .onCompletion(v -> Async.async(secondMode, 0, atomicIntegerDecrease, integer)
                         .onCompletion(w -> Async.async(firstMode, 0, atomicIntegerIncrease, integer)

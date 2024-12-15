@@ -15,6 +15,7 @@ public class SchedulerNoThreading extends Scheduler implements Scheduler.TaskExe
         registerTarget(target, this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <R> Result<R> executeTask(int hash, long version, Supplier<R> task, ExecutionMode executionMode) {
         Results.Fixed<R> fixed = (Results.Fixed<R>) Results.fixed(hash, version, null);
