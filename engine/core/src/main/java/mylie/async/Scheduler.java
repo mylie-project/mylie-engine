@@ -45,21 +45,23 @@ public abstract class Scheduler {
     public abstract void registerTarget(Target target, Consumer<Runnable> drain);
 
     <R> Result<R> executeTask(ExecutionMode executionMode, int hash, long version, Supplier<R> supplier) {
+        if (supplier == null) {
+            throw new NullPointerException("Supplier cannot be null");
+        }
         TaskExecutor executor = targets.get(executionMode.target());
         if (executor == null) {
             log.error("No executor registered for target {}", executionMode.target());
             return null;
         }
-        Result<R> result = executor.executeTask(hash, version, supplier);
+        Result<R> result = executor.executeTask(hash, version, supplier, executionMode);
         if (result == null) {
             log.error("Task execution returned null");
             return null;
         }
-        executionMode.cache().set(result);
         return result;
     }
 
     protected interface TaskExecutor {
-        <R> Result<R> executeTask(int hash, long version, Supplier<R> task);
+        <R> Result<R> executeTask(int hash, long version, Supplier<R> task, ExecutionMode executionMode);
     }
 }

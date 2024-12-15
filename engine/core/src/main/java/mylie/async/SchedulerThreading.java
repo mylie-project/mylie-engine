@@ -16,7 +16,7 @@ public class SchedulerThreading extends Scheduler {
 
     record TaskExecutor(Consumer<Runnable> drain, Target target) implements Scheduler.TaskExecutor {
         @Override
-        public <R> Result<R> executeTask(int hash, long version, Supplier<R> task) {
+        public <R> Result<R> executeTask(int hash, long version, Supplier<R> task, ExecutionMode executionMode) {
             Results.CompletableFutureResult<R> result =
                     Results.CompletableFuture(hash, version, new CompletableFuture<>(), task, target);
             drain.accept(result::execute);

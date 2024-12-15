@@ -74,7 +74,7 @@ public class Async {
         return result;
     }
 
-    private static boolean direct(ExecutionMode executionMode) {
+    static boolean direct(ExecutionMode executionMode) {
         ExecutionMode.Mode mode = executionMode.mode();
         if (mode == ExecutionMode.Mode.Async) {
             return false;

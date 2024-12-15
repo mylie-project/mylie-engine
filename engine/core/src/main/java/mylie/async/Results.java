@@ -2,8 +2,11 @@ package mylie.async;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 
 public final class Results {
     private Results() {}
@@ -19,7 +22,8 @@ public final class Results {
 
     @Getter
     public static class Fixed<T> extends Result<T> {
-        final T result;
+        @Setter(AccessLevel.PACKAGE)
+        T result;
 
         public Fixed(int hashCode, long version, T result) {
             super(hashCode, version);
@@ -31,6 +35,7 @@ public final class Results {
         private final CompletableFuture<T> future;
         private final Supplier<T> task;
         private final Target target;
+        private final AtomicBoolean running = new AtomicBoolean(false);
 
         public CompletableFutureResult(
                 int hashCode, long version, CompletableFuture<T> future, Supplier<T> task, Target target) {
@@ -43,8 +48,10 @@ public final class Results {
         @Override
         public T result() {
             try {
-                if (!future.isDone() && Async.currentThread(target)) {
-                    execute();
+                if (!future.isDone() && target == Target.Background) {
+                    if (running.compareAndSet(false, true)) {
+                        future.complete(task.get());
+                    }
                 }
                 return future.get();
             } catch (InterruptedException | ExecutionException e) {
@@ -53,7 +60,9 @@ public final class Results {
         }
 
         void execute() {
-            future.complete(task.get());
+            if (running.compareAndSet(false, true)) {
+                future.complete(task.get());
+            }
         }
     }
 }

@@ -16,7 +16,10 @@ public class SchedulerNoThreading extends Scheduler implements Scheduler.TaskExe
     }
 
     @Override
-    public <R> Result<R> executeTask(int hash, long version, Supplier<R> task) {
-        return Results.fixed(hash, version, task.get());
+    public <R> Result<R> executeTask(int hash, long version, Supplier<R> task, ExecutionMode executionMode) {
+        Results.Fixed<R> fixed = (Results.Fixed<R>) Results.fixed(hash, version, null);
+        executionMode.cache().set(fixed);
+        fixed.result(task.get());
+        return fixed;
     }
 }
