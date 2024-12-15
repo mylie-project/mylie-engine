@@ -242,6 +242,7 @@ public class SchedulerTest {
         assertEquals(1, integer.get());
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @ParameterizedTest
     @MethodSource("schedulerProvider")
     void shouldHandleNullExecutionMode(Scheduler scheduler) {
