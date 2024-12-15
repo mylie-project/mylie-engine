@@ -1,5 +1,6 @@
 package mylie.async;
 
+import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -7,6 +8,7 @@ import lombok.Getter;
 public abstract class Result<T> {
     private final int hash;
     private final long version;
+    private Function<T, Result<?>> onCompletion;
 
     public Result(int hash, long version) {
         this.hash = hash;
@@ -14,4 +16,6 @@ public abstract class Result<T> {
     }
 
     public abstract T result();
+
+    public abstract <R> Result<R> onCompletion(Function<T, Result<R>> onCompletion);
 }

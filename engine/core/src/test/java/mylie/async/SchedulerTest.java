@@ -4,6 +4,7 @@ import static mylie.async.Async.async;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import mylie.util.Exceptions;
@@ -19,7 +20,9 @@ public class SchedulerTest {
         return Stream.of(
                 new SchedulerNoThreading(),
                 new SchedulerExecutor(Executors.newVirtualThreadPerTaskExecutor()),
-                new SchedulerExecutor(Executors.newFixedThreadPool(1)));
+                new SchedulerExecutor(Executors.newFixedThreadPool(1)),
+                new SchedulerExecutor(Executors.newScheduledThreadPool(16)),
+                new SchedulerExecutor(ForkJoinPool.commonPool()));
     }
 
     @ParameterizedTest
@@ -332,11 +335,77 @@ public class SchedulerTest {
         ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
         Async.await(
-                Async.async(asyncMode, 0, Nested1, integer),
+                Async.async(asyncMode, 0, Nested3, integer),
                 Async.async(directMode, 0, atomicIntegerIncrease, integer),
                 Async.async(directMode, 0, atomicIntegerDecrease, integer));
 
         assertEquals(3, integer.get());
+    }
+
+    @ParameterizedTest
+    @MethodSource("schedulerProvider")
+    void shouldHandleDeeplyNestedOperations(Scheduler scheduler) {
+        Async.scheduler(scheduler);
+        AtomicInteger integer = new AtomicInteger(0);
+
+        ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+
+        Functions.F0<Boolean, AtomicInteger> deepNestedFunction = new Functions.F0<>("DeepNestedFunction") {
+            @Override
+            public Boolean run(AtomicInteger o) {
+                Async.await(
+                        async(asyncMode, 0, Nested3, o),
+                        async(asyncMode, 0, atomicIntegerIncrease, o),
+                        async(asyncMode, 0, atomicIntegerDecrease, o),
+                        async(asyncMode, 0, Nested2, o));
+                o.incrementAndGet();
+                return true;
+            }
+        };
+
+        Async.await(
+                async(asyncMode, 0, deepNestedFunction, integer), async(asyncMode, 0, atomicIntegerIncrease, integer));
+
+        assertEquals(7, integer.get());
+    }
+
+    @ParameterizedTest
+    @MethodSource("schedulerProvider")
+    void shouldProperlyHandleInterleavedNestedOperations(Scheduler scheduler) {
+        Async.scheduler(scheduler);
+        AtomicInteger integer = new AtomicInteger(0);
+
+        ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+        ExecutionMode directMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
+
+        Async.await(
+                async(asyncMode, 0, Nested3, integer),
+                async(directMode, 0, atomicIntegerIncrease, integer),
+                async(asyncMode, 0, Nested2, integer),
+                async(directMode, 0, atomicIntegerDecrease, integer),
+                async(asyncMode, 0, atomicIntegerIncrease, integer));
+
+        assertEquals(6, integer.get());
+    }
+
+    @ParameterizedTest
+    @MethodSource("schedulerProvider")
+    void shouldTestAsyncChainingWithOnCompletion(Scheduler scheduler) {
+        Async.scheduler(scheduler);
+        AtomicInteger integer = new AtomicInteger(0);
+
+        ExecutionMode firstMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+        ExecutionMode secondMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+
+        Result<Boolean> result = Async.async(firstMode, 0, atomicIntegerIncrease, integer)
+                .onCompletion(v -> Async.async(secondMode, 0, atomicIntegerDecrease, integer)
+                        .onCompletion(w -> Async.async(firstMode, 0, atomicIntegerIncrease, integer)
+                                .onCompletion(x -> Async.async(secondMode, 0, Nested2, integer)
+                                        .onCompletion(y -> Async.async(firstMode, 0, Nested3, integer)))));
+
+        Async.await(result);
+
+        assertEquals(6, integer.get());
     }
 
     private static final Functions.F0<Boolean, AtomicInteger> atomicIntegerIncrease =
@@ -357,7 +426,7 @@ public class SchedulerTest {
                 }
             };
 
-    private static final Functions.F0<Boolean, AtomicInteger> Nested0 = new Functions.F0<>("AtomicIntegerDecrease") {
+    private static final Functions.F0<Boolean, AtomicInteger> Nested2 = new Functions.F0<>("AtomicIntegerDecrease") {
         @Override
         public Boolean run(AtomicInteger o) {
             o.incrementAndGet();
@@ -370,11 +439,11 @@ public class SchedulerTest {
         }
     };
 
-    private static final Functions.F0<Boolean, AtomicInteger> Nested1 = new Functions.F0<>("AtomicIntegerDecrease") {
+    private static final Functions.F0<Boolean, AtomicInteger> Nested3 = new Functions.F0<>("AtomicIntegerDecrease") {
         @Override
         public Boolean run(AtomicInteger o) {
             Async.await(
-                    async(new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 0, Nested0, o));
+                    async(new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 0, Nested2, o));
             o.incrementAndGet();
             return true;
         }

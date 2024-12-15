@@ -3,6 +3,7 @@ package mylie.async;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,7 +16,7 @@ public final class Results {
         return new Fixed<>(hash, version, result);
     }
 
-    public static <R> CompletableFutureResult<R> CompletableFuture(
+    public static <R> CompletableFutureResult<R> completableFuture(
             int hash, long version, CompletableFuture<R> future, Supplier<R> task, Target target) {
         return new CompletableFutureResult<>(hash, version, future, task, target);
     }
@@ -28,6 +29,11 @@ public final class Results {
         public Fixed(int hashCode, long version, T result) {
             super(hashCode, version);
             this.result = result;
+        }
+
+        @Override
+        public <R> Result<R> onCompletion(Function<T, Result<R>> onCompletion) {
+            return onCompletion.apply(result);
         }
     }
 
@@ -48,7 +54,7 @@ public final class Results {
         @Override
         public T result() {
             try {
-                if (!future.isDone() && target == Target.Background) {
+                if (!future.isDone() && (target == Target.Background || Async.currentThread(target))) {
                     if (running.compareAndSet(false, true)) {
                         future.complete(task.get());
                     }
@@ -57,6 +63,11 @@ public final class Results {
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public <R> Result<R> onCompletion(Function<T, Result<R>> onCompletion) {
+            return onCompletion.apply(result());
         }
 
         void execute() {

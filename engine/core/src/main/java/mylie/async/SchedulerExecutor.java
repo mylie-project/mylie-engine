@@ -18,7 +18,7 @@ public class SchedulerExecutor extends SchedulerThreading implements Scheduler.T
         // CompletableFuture<R> future = CompletableFuture.supplyAsync(task, executorService);
         // Result<R> result = Results.CompletableFuture(hash, version, future, task, Target.Background);
         Results.CompletableFutureResult<R> result =
-                Results.CompletableFuture(hash, version, new CompletableFuture<>(), task, Target.Background);
+                Results.completableFuture(hash, version, new CompletableFuture<>(), task, Target.Background);
         executionMode.cache().set(result);
         executorService.submit(result::execute);
         return result;
