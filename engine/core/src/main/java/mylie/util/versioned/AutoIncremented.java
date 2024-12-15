@@ -35,6 +35,10 @@ public final class AutoIncremented<T> implements Versioned<T> {
         this.updateIfEqual = updateIfEqual;
     }
 
+    public AutoIncremented() {
+        this(null, false);
+    }
+
     /**
      * Retrieves the current value of the entity.
      *
