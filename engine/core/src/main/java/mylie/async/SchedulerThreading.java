@@ -5,8 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class SchedulerThreading extends Scheduler {
-    public SchedulerThreading(GlobalCache globalCache) {
-        super(globalCache);
+    public SchedulerThreading(GlobalCache globalCache, String name) {
+        super(globalCache, name);
     }
 
     @Override

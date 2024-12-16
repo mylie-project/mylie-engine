@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 
 public class SchedulerNoThreading extends Scheduler implements Scheduler.TaskExecutor {
     public SchedulerNoThreading() {
-        super(new GlobalCacheMap(new HashMap<>()));
+        super(new GlobalCacheMap(new HashMap<>()), "NoThreading");
         registerTarget(Target.Background, this);
     }
 

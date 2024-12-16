@@ -7,8 +7,8 @@ import java.util.function.Supplier;
 public class SchedulerExecutor extends SchedulerThreading implements Scheduler.TaskExecutor {
     final ExecutorService executorService;
 
-    public SchedulerExecutor(ExecutorService executorService) {
-        super(new GlobalCacheMapConcurrent());
+    public SchedulerExecutor(ExecutorService executorService, String name) {
+        super(new GlobalCacheMapConcurrent(), name);
         this.executorService = executorService;
         registerTarget(Target.Background, this);
     }

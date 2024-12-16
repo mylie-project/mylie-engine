@@ -11,15 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class Scheduler {
-
+    private final String name;
     private final GlobalCache globalCache;
     private final List<Cache> caches = new CopyOnWriteArrayList<>();
     private final Map<Target, TaskExecutor> targets = new HashMap<>();
 
-    public Scheduler(GlobalCache globalCache) {
+    public Scheduler(GlobalCache globalCache, String name) {
         this.globalCache = globalCache;
         registerDefaultCaches();
         Async.scheduler(this);
+        this.name = name;
     }
 
     public void version(long version) {
@@ -63,5 +64,10 @@ public abstract class Scheduler {
 
     protected interface TaskExecutor {
         <R> Result<R> executeTask(int hash, long version, Supplier<R> task, ExecutionMode executionMode);
+    }
+
+    @Override
+    public String toString() {
+        return "Scheduler{" + "name='" + name + '\'' + '}';
     }
 }

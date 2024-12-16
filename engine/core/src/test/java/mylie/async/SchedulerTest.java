@@ -19,10 +19,10 @@ public class SchedulerTest {
 
         return Stream.of(
                 new SchedulerNoThreading(),
-                new SchedulerExecutor(Executors.newVirtualThreadPerTaskExecutor()),
-                new SchedulerExecutor(Executors.newFixedThreadPool(1)),
-                new SchedulerExecutor(Executors.newScheduledThreadPool(16)),
-                new SchedulerExecutor(ForkJoinPool.commonPool()));
+                new SchedulerExecutor(Executors.newVirtualThreadPerTaskExecutor(), "Virtual Thread"),
+                new SchedulerExecutor(Executors.newFixedThreadPool(1), "One Thread"),
+                new SchedulerExecutor(Executors.newScheduledThreadPool(16), "16 Threads"),
+                new SchedulerExecutor(ForkJoinPool.commonPool(), "ForkJoin-Common"));
     }
 
     @ParameterizedTest
