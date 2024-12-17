@@ -24,6 +24,9 @@ public class ApplicationComponent extends BaseCoreComponent implements Lifecycle
     @Override
     public void onInit() {
         application = engineOption(Engine.Options.Application);
+        if(application instanceof BaseApplication baseApplication){
+            baseApplication.componentManager(componentManager());
+        }
         addComponent(application);
         component(Scheduler.class).registerTarget(Application.Target, applicationQueue::add);
         applicationThread = component(Scheduler.class).createThread(Application.Target, applicationQueue);

@@ -27,4 +27,8 @@ public class BaseCoreComponent extends BaseComponent implements CoreComponent {
     protected <T> Versioned<T> engineProperty(Property<T, Core> property) {
         return property.get(componentManager().core());
     }
+
+    protected ComponentManager componentManager() {
+        return super.componentManager();
+    }
 }

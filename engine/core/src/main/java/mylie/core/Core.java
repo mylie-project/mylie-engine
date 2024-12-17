@@ -39,6 +39,8 @@ public class Core {
     }
 
     public Engine.ShutdownReason onStart() {
+        shutdownReason=null;
+        componentManager.addComponent(new EngineManager(this));
         initScheduler();
         initTimer();
         initComponents();
@@ -71,12 +73,13 @@ public class Core {
             scheduler.version(frameId);
             time = timer.update(frameId);
             componentManager.update(time);
-            if (frameId == 10) {
-                shutdownReason=new Engine.ShutdownReason.User("adsf");
-            }
         }
         componentManager.shutdown(time);
         scheduler.shutdown();
+    }
+
+    void onShutdown(Engine.ShutdownReason reason) {
+        shutdownReason = reason;
     }
 
     private void initComponents() {
