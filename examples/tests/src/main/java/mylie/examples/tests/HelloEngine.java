@@ -2,8 +2,6 @@ package mylie.examples.tests;
 
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
-import mylie.application.Application;
-import mylie.application.ApplicationComponent;
 import mylie.application.BaseApplication;
 import mylie.async.SchedulerSettings;
 import mylie.component.AppComponent;
@@ -28,7 +26,7 @@ public class HelloEngine extends BaseApplication {
     @Override
     public void onUpdate(Timer.Time time) {
         log.trace("HelloEngine updated.");
-        if(time.version() == 10){
+        if (time.version() == 10) {
             component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("All done"));
         }
     }

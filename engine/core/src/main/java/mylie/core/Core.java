@@ -31,7 +31,6 @@ public class Core {
     private Scheduler scheduler;
     private Timer timer;
     private Engine.ShutdownReason shutdownReason;
-    private Thread updateThread;
 
     public Core(EngineConfiguration configuration) {
         this.configuration = configuration;
@@ -39,12 +38,12 @@ public class Core {
     }
 
     public Engine.ShutdownReason onStart() {
-        shutdownReason=null;
+        shutdownReason = null;
         componentManager.addComponent(new EngineManager(this));
         initScheduler();
         initTimer();
         initComponents();
-        updateThread = new Thread(this::updateLoop);
+        Thread updateThread = new Thread(this::updateLoop);
         updateThread.setName("Update Loop");
         if (Engine.Properties.MultiThreaded.get(this).value()) {
             updateThread.start();
