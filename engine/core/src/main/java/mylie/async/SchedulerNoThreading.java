@@ -1,6 +1,7 @@
 package mylie.async;
 
 import java.util.HashMap;
+import java.util.concurrent.BlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -14,6 +15,19 @@ public class SchedulerNoThreading extends Scheduler implements Scheduler.TaskExe
     public void registerTarget(Target target, Consumer<Runnable> drain) {
         registerTarget(target, this);
     }
+
+    @Override
+    public ManagedThread createThread(Target target, BlockingQueue<Runnable> queue) {
+        return new ManagedThread() {
+            @Override
+            public int hashCode() {
+                return super.hashCode();
+            }
+        };
+    }
+
+    @Override
+    public void shutdown() {}
 
     @SuppressWarnings("unchecked")
     @Override

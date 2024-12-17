@@ -31,12 +31,12 @@ public class SchedulerTest {
         Async.scheduler(scheduler);
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
-        Async.await(
+        Wait.wait(
                 async(executionMode, 0, atomicIntegerIncrease, integer),
                 async(executionMode, 0, atomicIntegerIncrease, integer),
                 async(executionMode, 0, atomicIntegerIncrease, integer));
         assertEquals(3, integer.get());
-        Async.await(async(executionMode, 0, atomicIntegerDecrease, integer));
+        Wait.wait(async(executionMode, 0, atomicIntegerDecrease, integer));
         assertEquals(2, integer.get());
     }
 
@@ -46,7 +46,7 @@ public class SchedulerTest {
         Async.scheduler(scheduler);
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
-        Async.await(
+        Wait.wait(
                 async(executionMode, 0, atomicIntegerIncrease, integer),
                 async(executionMode, 0, atomicIntegerIncrease, integer),
                 async(executionMode, 0, atomicIntegerIncrease, integer));
@@ -60,7 +60,7 @@ public class SchedulerTest {
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode Never = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
         ExecutionMode OneFrame = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
-        Async.await(
+        Wait.wait(
                 async(Never, 0, atomicIntegerIncrease, integer),
                 async(OneFrame, 0, atomicIntegerIncrease, integer),
                 async(Never, 0, atomicIntegerIncrease, integer),
@@ -74,7 +74,7 @@ public class SchedulerTest {
         Async.scheduler(scheduler);
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
-        Async.await(
+        Wait.wait(
                 async(Versioned, 1, atomicIntegerIncrease, integer),
                 async(Versioned, 1, atomicIntegerIncrease, integer),
                 async(Versioned, 2, atomicIntegerIncrease, integer));
@@ -87,7 +87,7 @@ public class SchedulerTest {
         Async.scheduler(scheduler);
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
-        Async.await(
+        Wait.wait(
                 async(Versioned, 1, atomicIntegerIncrease, integer),
                 async(Versioned, 2, atomicIntegerIncrease, integer),
                 async(Versioned, 2, atomicIntegerIncrease, integer));
@@ -100,7 +100,7 @@ public class SchedulerTest {
         Async.scheduler(scheduler);
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
-        Async.await(
+        Wait.wait(
                 async(Versioned, 2, atomicIntegerIncrease, integer),
                 async(Versioned, 1, atomicIntegerIncrease, integer),
                 async(Versioned, 2, atomicIntegerIncrease, integer));
@@ -113,7 +113,7 @@ public class SchedulerTest {
         Async.scheduler(scheduler);
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
-        Async.await(
+        Wait.wait(
                 async(Versioned, 1, atomicIntegerIncrease, integer),
                 async(Versioned, 1, atomicIntegerIncrease, integer),
                 async(Versioned, 3, atomicIntegerIncrease, integer));
@@ -127,7 +127,7 @@ public class SchedulerTest {
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode Never = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
         ExecutionMode AsyncOneFrame = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
-        Async.await(
+        Wait.wait(
                 async(Never, 0, atomicIntegerIncrease, integer),
                 async(AsyncOneFrame, 0, atomicIntegerIncrease, integer),
                 async(Never, 0, atomicIntegerIncrease, integer));
@@ -140,7 +140,7 @@ public class SchedulerTest {
         Async.scheduler(scheduler);
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode OneFrame = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
-        Async.await(
+        Wait.wait(
                 async(OneFrame, 0, atomicIntegerIncrease, integer),
                 async(OneFrame, 1, atomicIntegerIncrease, integer),
                 async(OneFrame, 1, atomicIntegerIncrease, integer));
@@ -153,8 +153,8 @@ public class SchedulerTest {
         Async.scheduler(scheduler);
         AtomicInteger integer = new AtomicInteger(0);
         ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
-        Thread thread1 = new Thread(() -> Async.await(async(executionMode, 0, atomicIntegerIncrease, integer)));
-        Thread thread2 = new Thread(() -> Async.await(async(executionMode, 0, atomicIntegerIncrease, integer)));
+        Thread thread1 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
+        Thread thread2 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
         thread1.start();
         thread2.start();
         try {
@@ -174,9 +174,9 @@ public class SchedulerTest {
         ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
         // Create multiple threads to execute tasks simultaneously
-        Thread thread1 = new Thread(() -> Async.await(async(executionMode, 0, atomicIntegerIncrease, integer)));
-        Thread thread2 = new Thread(() -> Async.await(async(executionMode, 0, atomicIntegerIncrease, integer)));
-        Thread thread3 = new Thread(() -> Async.await(async(executionMode, 0, atomicIntegerIncrease, integer)));
+        Thread thread1 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
+        Thread thread2 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
+        Thread thread3 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
 
         thread1.start();
         thread2.start();
@@ -201,7 +201,7 @@ public class SchedulerTest {
         ExecutionMode Direct = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
         ExecutionMode AsyncModeCache = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
 
-        Async.await(
+        Wait.wait(
                 async(Direct, 0, atomicIntegerIncrease, integer),
                 async(AsyncModeCache, 1, atomicIntegerIncrease, integer),
                 async(Direct, 0, atomicIntegerIncrease, integer));
@@ -217,7 +217,7 @@ public class SchedulerTest {
 
         ExecutionMode VersionedCache = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
 
-        Async.await(
+        Wait.wait(
                 async(VersionedCache, 1, atomicIntegerIncrease, integer),
                 async(VersionedCache, 1, atomicIntegerIncrease, integer),
                 async(VersionedCache, 2, atomicIntegerIncrease, integer),
@@ -234,7 +234,7 @@ public class SchedulerTest {
 
         ExecutionMode OneFrameCache = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
 
-        Async.await(
+        Wait.wait(
                 async(OneFrameCache, 0, atomicIntegerIncrease, integer),
                 async(OneFrameCache, 1, atomicIntegerIncrease, integer),
                 async(OneFrameCache, 2, atomicIntegerIncrease, integer));
@@ -249,7 +249,7 @@ public class SchedulerTest {
         Async.scheduler(scheduler);
         AtomicInteger integer = new AtomicInteger(0);
         Assertions.assertThrows(
-                NullPointerException.class, () -> Async.await(Async.async(null, 1, atomicIntegerIncrease, integer)));
+                NullPointerException.class, () -> Wait.wait(Async.async(null, 1, atomicIntegerIncrease, integer)));
     }
 
     @ParameterizedTest
@@ -270,7 +270,7 @@ public class SchedulerTest {
         ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, null);
         Assertions.assertThrows(
                 NullPointerException.class,
-                () -> Async.await(Async.async(executionMode, 1, atomicIntegerIncrease, integer)));
+                () -> Wait.wait(Async.async(executionMode, 1, atomicIntegerIncrease, integer)));
     }
 
     @ParameterizedTest
@@ -288,7 +288,7 @@ public class SchedulerTest {
 
         Assertions.assertThrows(
                 RuntimeException.class,
-                () -> Async.await(Async.async(executionMode, 1, faultyFunction, new AtomicInteger(0))));
+                () -> Wait.wait(Async.async(executionMode, 1, faultyFunction, new AtomicInteger(0))));
     }
 
     @ParameterizedTest
@@ -299,7 +299,7 @@ public class SchedulerTest {
         ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, null, Caches.No);
         Assertions.assertThrows(
                 NullPointerException.class,
-                () -> Async.await(Async.async(executionMode, 1, atomicIntegerIncrease, integer)));
+                () -> Wait.wait(Async.async(executionMode, 1, atomicIntegerIncrease, integer)));
     }
 
     @ParameterizedTest
@@ -310,7 +310,7 @@ public class SchedulerTest {
 
         Assertions.assertThrows(
                 RuntimeException.class,
-                () -> Async.await(Async.async(executionMode, 1, throwException, new AtomicInteger(0))));
+                () -> Wait.wait(Async.async(executionMode, 1, throwException, new AtomicInteger(0))));
     }
 
     @ParameterizedTest
@@ -321,7 +321,7 @@ public class SchedulerTest {
 
         RuntimeException exception = Assertions.assertThrows(
                 RuntimeException.class,
-                () -> Async.await(Async.async(executionMode, 1, throwException, new AtomicInteger(0))));
+                () -> Wait.wait(Async.async(executionMode, 1, throwException, new AtomicInteger(0))));
 
         assertEquals("Simulated exception", Exceptions.getRootCause(exception).getMessage());
     }
@@ -335,7 +335,7 @@ public class SchedulerTest {
         ExecutionMode directMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
         ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
-        Async.await(
+        Wait.wait(
                 Async.async(asyncMode, 0, Nested3, integer),
                 Async.async(directMode, 0, atomicIntegerIncrease, integer),
                 Async.async(directMode, 0, atomicIntegerDecrease, integer));
@@ -354,7 +354,7 @@ public class SchedulerTest {
         Functions.F0<Boolean, AtomicInteger> deepNestedFunction = new Functions.F0<>("DeepNestedFunction") {
             @Override
             public Boolean run(AtomicInteger o) {
-                Async.await(
+                Wait.wait(
                         async(asyncMode, 0, Nested3, o),
                         async(asyncMode, 0, atomicIntegerIncrease, o),
                         async(asyncMode, 0, atomicIntegerDecrease, o),
@@ -364,7 +364,7 @@ public class SchedulerTest {
             }
         };
 
-        Async.await(
+        Wait.wait(
                 async(asyncMode, 0, deepNestedFunction, integer), async(asyncMode, 0, atomicIntegerIncrease, integer));
 
         assertEquals(7, integer.get());
@@ -379,7 +379,7 @@ public class SchedulerTest {
         ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
         ExecutionMode directMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
 
-        Async.await(
+        Wait.wait(
                 async(asyncMode, 0, Nested3, integer),
                 async(directMode, 0, atomicIntegerIncrease, integer),
                 async(asyncMode, 0, Nested2, integer),
@@ -405,7 +405,7 @@ public class SchedulerTest {
                                 .onCompletion(x -> Async.async(secondMode, 0, Nested2, integer)
                                         .onCompletion(y -> Async.async(firstMode, 0, Nested3, integer)))));
 
-        Async.await(result);
+        Wait.wait(result);
 
         assertEquals(6, integer.get());
     }
@@ -432,7 +432,7 @@ public class SchedulerTest {
         @Override
         public Boolean run(AtomicInteger o) {
             o.incrementAndGet();
-            Async.await(async(
+            Wait.wait(async(
                     new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No),
                     0,
                     atomicIntegerIncrease,
@@ -444,8 +444,7 @@ public class SchedulerTest {
     private static final Functions.F0<Boolean, AtomicInteger> Nested3 = new Functions.F0<>("AtomicIntegerDecrease") {
         @Override
         public Boolean run(AtomicInteger o) {
-            Async.await(
-                    async(new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 0, Nested2, o));
+            Wait.wait(async(new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 0, Nested2, o));
             o.incrementAndGet();
             return true;
         }

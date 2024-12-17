@@ -1,7 +1,10 @@
 package mylie.async;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -9,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Async {
+    public static final Void VOID = new Void();
+
     @Setter(AccessLevel.PACKAGE)
     private static Scheduler scheduler;
 
@@ -53,10 +58,26 @@ public class Async {
         return result;
     }
 
-    public static void await(Result<?>... results) {
-        for (Result<?> result : results) {
-            result.result();
+    public static <T, O> Iterable<Result<T>> async(
+            List<?> objects, Class<? extends O> type, java.util.function.Function<O, Result<T>> function) {
+        List<Result<T>> results = new ArrayList<>();
+        for (Object object : objects) {
+            if (type.isInstance(object)) {
+                results.add(function.apply(type.cast(object)));
+            }
         }
+        return results;
+    }
+
+    public static <T, O, P0> Iterable<Result<T>> async(
+            List<?> objects, Class<? extends O> type, BiFunction<O, P0, Result<T>> function, P0 param) {
+        List<Result<T>> results = new ArrayList<>();
+        for (Object object : objects) {
+            if (type.isInstance(object)) {
+                results.add(function.apply(type.cast(object), param));
+            }
+        }
+        return results;
     }
 
     private static int hash(Function function, Object... objects) {
@@ -82,18 +103,22 @@ public class Async {
         if (executionMode.target() == Target.Background) {
             return true;
         }
-        if (currentThread(executionMode.target())) {
+        if (isCurrentThread(executionMode.target())) {
             return true;
         }
         return false;
     }
 
-    static void registerThread(Target target) {
+    public static void registerThread(Target target) {
         ThreadLocalTarget.set(target);
         Thread.currentThread().setName(target.name());
     }
 
-    public static boolean currentThread(Target target) {
+    public static boolean isCurrentThread(Target target) {
         return ThreadLocalTarget.get() == target;
+    }
+
+    public static class Void {
+        private Void() {}
     }
 }

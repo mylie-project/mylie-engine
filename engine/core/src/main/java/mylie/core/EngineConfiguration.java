@@ -7,9 +7,13 @@ import mylie.util.configuration.ConfigurationFactory;
 import mylie.util.configuration.MapBasedConfigurationFactory;
 
 public class EngineConfiguration {
-    static final ConfigurationFactory<EngineConfiguration> CONFIGURATION_FACTORY =
+    static final ConfigurationFactory<EngineConfiguration> Factory =
             new MapBasedConfigurationFactory<>(EngineConfiguration::config);
 
     @Getter(AccessLevel.PRIVATE)
-    private final Configuration<EngineConfiguration> config = CONFIGURATION_FACTORY.configuration();
+    private final Configuration<EngineConfiguration> config;
+
+    EngineConfiguration() {
+        config = Factory.configuration();
+    }
 }

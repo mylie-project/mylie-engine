@@ -6,6 +6,12 @@ project(":core").projectDir=file("engine/core")
 include("math")
 project(":math").projectDir=file("engine/math")
 
+include("platform.desktop")
+project(":platform.desktop").projectDir=file("engine/platforms/desktop")
+
+include("examples.tests")
+project(":examples.tests").projectDir=file("examples/tests")
+
 dependencyResolutionManagement{
     versionCatalogs{
         create("libs"){

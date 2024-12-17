@@ -3,6 +3,7 @@ package mylie.async;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -45,6 +46,8 @@ public abstract class Scheduler {
 
     public abstract void registerTarget(Target target, Consumer<Runnable> drain);
 
+    public abstract ManagedThread createThread(Target target, BlockingQueue<Runnable> queue);
+
     <R> Result<R> executeTask(ExecutionMode executionMode, int hash, long version, Supplier<R> supplier) {
         if (supplier == null) {
             throw new NullPointerException("Supplier cannot be null");
@@ -61,6 +64,8 @@ public abstract class Scheduler {
         }
         return result;
     }
+
+    public abstract void shutdown();
 
     protected interface TaskExecutor {
         <R> Result<R> executeTask(int hash, long version, Supplier<R> task, ExecutionMode executionMode);

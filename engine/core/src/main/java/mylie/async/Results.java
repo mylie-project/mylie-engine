@@ -54,7 +54,7 @@ public final class Results {
         @Override
         public T result() {
             try {
-                if (!future.isDone() && (target == Target.Background || Async.currentThread(target))) {
+                if (!future.isDone() && (target == Target.Background || Async.isCurrentThread(target))) {
                     if (running.compareAndSet(false, true)) {
                         future.complete(task.get());
                     }
