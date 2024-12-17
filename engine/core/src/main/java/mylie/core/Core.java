@@ -30,7 +30,7 @@ public class Core {
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private Scheduler scheduler;
     private Timer timer;
-    private boolean running = false;
+    private Engine.ShutdownReason shutdownReason;
     private Thread updateThread;
 
     public Core(EngineConfiguration configuration) {
@@ -60,20 +60,19 @@ public class Core {
             updateLoop();
         }
 
-        return null;
+        return shutdownReason;
     }
 
     private void updateLoop() {
         long frameId = -1;
         Timer.Time time = null;
-        running = true;
-        while (running) {
+        while (shutdownReason == null) {
             frameId++;
             scheduler.version(frameId);
             time = timer.update(frameId);
             componentManager.update(time);
             if (frameId == 10) {
-                running = false;
+                shutdownReason=new Engine.ShutdownReason.User("adsf");
             }
         }
         componentManager.shutdown(time);
