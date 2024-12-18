@@ -29,7 +29,6 @@ public class GraphicsContextConfiguration extends Configurations.Map<GraphicsCon
         return super.option(option);
     }
 
-    @SuppressWarnings("unchecked")
     public Iterable<? extends GraphicsContext.Option<?>> getOptions() {
         List<GraphicsContext.Option<?>> list = new ArrayList<>();
         for (Option<GraphicsContext, ?> option : super.options()) {

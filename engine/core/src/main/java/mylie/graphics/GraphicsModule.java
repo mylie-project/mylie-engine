@@ -21,7 +21,6 @@ public class GraphicsModule extends BaseCoreComponent
     private GraphicsContext primaryContext;
     private final List<GraphicsContext> activeContexts = new CopyOnWriteArrayList<>();
     private final List<GraphicsContext> syncedContexts = new CopyOnWriteArrayList<>();
-    ;
     private final List<Result<Async.Void>> swapBufferQueue = new LinkedList<>();
 
     @Override

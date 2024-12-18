@@ -48,13 +48,12 @@ public class HelloEngine extends BaseApplication {
         Async.async(
                         new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No),
                         -1,
-                        new Functions.F0<Object, Object>("asdf") {
+                        new Functions.F0<>("asdf") {
                             @Override
                             protected Object run(Object object) {
                                 GLFW.glfwPollEvents();
                                 return new Object();
                             }
-                            ;
                         },
                         null)
                 .result();

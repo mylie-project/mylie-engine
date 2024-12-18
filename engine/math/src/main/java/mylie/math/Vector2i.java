@@ -5,6 +5,7 @@ import java.nio.IntBuffer;
 import org.joml.Vector2dc;
 import org.joml.Vector2fc;
 
+@SuppressWarnings("unused")
 public class Vector2i extends org.joml.Vector2i implements Vector2ic {
     public Vector2i() {}
 
