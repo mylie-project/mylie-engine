@@ -1,8 +1,7 @@
 package mylie.input;
 
-import mylie.async.Result;
-
 import java.util.List;
+import mylie.async.Result;
 
 public interface InputProvider {
     Result<List<InputEvent>> inputEvents();

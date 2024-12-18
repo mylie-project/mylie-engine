@@ -17,8 +17,10 @@ import org.lwjgl.system.MemoryUtil;
 @Getter(AccessLevel.PACKAGE)
 public class GlfwContext extends GraphicsContext {
     private static final ExecutionMode engine = new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No);
+
     @Setter(AccessLevel.PACKAGE)
     private GlfwCallbacks callbacks;
+
     @Setter(AccessLevel.PACKAGE)
     private long handle;
 

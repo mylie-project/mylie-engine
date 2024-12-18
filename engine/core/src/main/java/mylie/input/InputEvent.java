@@ -1,4 +1,3 @@
 package mylie.input;
 
-public class InputEvent {
-}
+public class InputEvent {}

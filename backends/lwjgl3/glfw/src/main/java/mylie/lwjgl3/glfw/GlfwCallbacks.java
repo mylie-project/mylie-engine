@@ -118,8 +118,6 @@ public class GlfwCallbacks {
         GLFW.glfwSetWindowPosCallback(contexts.handle(), windowPosCallback);
     }
 
-
-
     public void free() {
         keyCallback.free();
         mouseButtonCallback.free();

@@ -1,13 +1,12 @@
 package mylie.component;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import mylie.async.*;
 import mylie.core.Timer;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class BaseComponent implements Component {
     @Setter(AccessLevel.PACKAGE)
@@ -31,8 +30,6 @@ public abstract class BaseComponent implements Component {
     Result<Async.Void> shutdown(Timer.Time time) {
         return Async.async(executionMode, time.version(), DestroyComponent, this, time);
     }
-
-
 
     private final Functions.F1<Async.Void, BaseComponent, Timer.Time> UpdateComponent =
             new Functions.F1<>("UpdateComponent") {
