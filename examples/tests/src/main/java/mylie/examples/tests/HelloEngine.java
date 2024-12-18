@@ -2,10 +2,6 @@ package mylie.examples.tests;
 
 import lombok.extern.slf4j.Slf4j;
 import mylie.application.BaseApplication;
-import mylie.async.Async;
-import mylie.async.Caches;
-import mylie.async.ExecutionMode;
-import mylie.async.Functions;
 import mylie.core.*;
 import mylie.examples.utils.IconFactory;
 import mylie.graphics.GraphicsContext;
@@ -13,10 +9,7 @@ import mylie.graphics.GraphicsContextConfiguration;
 import mylie.graphics.GraphicsManager;
 import mylie.lwjgl3.opengl.Lwjgl3OpenGlSettings;
 import mylie.math.Vector2i;
-import mylie.math.Vector2ic;
 import mylie.platform.desktop.Desktop;
-import mylie.util.versioned.Versioned;
-import org.lwjgl.glfw.GLFW;
 
 @Slf4j
 public class HelloEngine extends BaseApplication {

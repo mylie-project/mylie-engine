@@ -22,7 +22,7 @@ public abstract class BaseComponent implements Component {
             new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
 
     @Getter(AccessLevel.PACKAGE)
-    private List<BaseComponent> dependencies = new CopyOnWriteArrayList<>();
+    private final List<BaseComponent> dependencies = new CopyOnWriteArrayList<>();
 
     Result<Async.Void> update(Timer.Time time) {
         return Async.async(executionMode, time.version(), UpdateComponent, this, time);

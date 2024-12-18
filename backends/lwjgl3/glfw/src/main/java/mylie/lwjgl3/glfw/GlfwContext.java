@@ -122,8 +122,9 @@ public class GlfwContext extends GraphicsContext {
 
     private static final Functions.F0<Async.Void, GlfwContext> ShutdownContext = new Functions.F0<>("ShutdownContext") {
         @Override
-        protected Async.Void run(GlfwContext o) {
-            GLFW.glfwDestroyWindow(o.handle());
+        protected Async.Void run(GlfwContext context) {
+            context.callbacks().free();
+            GLFW.glfwDestroyWindow(context.handle());
             return Async.VOID;
         }
     };

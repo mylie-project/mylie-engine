@@ -1,7 +1,6 @@
 package mylie.lwjgl3.glfw;
 
 import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.system.MemoryUtil.memAllocInt;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -96,20 +95,20 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
         boolean fullscreen = false;
         if (videoMode instanceof GraphicsContext.VideoMode.Windowed windowed) {
             size = windowed.size();
-        } else if (videoMode instanceof GraphicsContext.VideoMode.WindowedFullscreen windowedFullscreen) {
-            if (windowedFullscreen.display() != null) {
-                size = windowedFullscreen.display().videoMode().resolution();
+        } else if (videoMode instanceof GraphicsContext.VideoMode.WindowedFullscreen(Display display1)) {
+            if (display1 != null) {
+                size = display1.videoMode().resolution();
             } else {
                 size = display().videoMode().resolution();
             }
-        } else if (videoMode instanceof GraphicsContext.VideoMode.Fullscreen fullscreenMode) {
+        } else if (videoMode instanceof GraphicsContext.VideoMode.Fullscreen(Display display1, Display.VideoMode mode)) {
             fullscreen = true;
-            if (fullscreenMode.display() != null) {
-                display = ((GlfwDisplay) fullscreenMode.display()).handle();
-                if (fullscreenMode.videoMode() != null) {
-                    size = fullscreenMode.videoMode().resolution();
+            if (display1 != null) {
+                display = ((GlfwDisplay) display1).handle();
+                if (mode != null) {
+                    size = mode.resolution();
                 } else {
-                    size = fullscreenMode.display().videoMode().resolution();
+                    size = display1.videoMode().resolution();
                 }
             } else {
                 display = ((GlfwDisplay) display()).handle();
@@ -156,31 +155,33 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
         long display = NULL;
         Vector3ic size = new Vector3i();
         Vector2ic position = new Vector2i();
-        if ((videoMode instanceof GraphicsContext.VideoMode.Fullscreen fullscreen)) {
-            display = fullscreen.display() != null
-                    ? ((GlfwDisplay) fullscreen.display()).handle()
+        if ((videoMode instanceof GraphicsContext.VideoMode.Fullscreen(Display displayTmp, Display.VideoMode mode))) {
+            display = displayTmp != null
+                    ? ((GlfwDisplay) displayTmp).handle()
                     : ((GlfwDisplay) display()).handle();
-            size = fullscreen.display() != null && fullscreen.videoMode() != null
+            size = displayTmp != null && mode != null
                     ? new Vector3i(
-                            fullscreen.videoMode().resolution(),
-                            fullscreen.videoMode().refreshRate())
+                            mode.resolution(),
+                            mode.refreshRate())
                     : new Vector3i(
                             display().videoMode().resolution(),
                             display().videoMode().refreshRate());
-        } else if (videoMode instanceof GraphicsContext.VideoMode.Windowed windowed) {
-            size = new Vector3i(windowed.size(), 0);
-            if (windowed.position() == GraphicsContext.VideoMode.Windowed.Centered || windowed.position() == null) {
-                GlfwDisplay tmpDisplay = (GlfwDisplay) (windowed.display() != null ? windowed.display() : display());
+        } else if (videoMode instanceof GraphicsContext.VideoMode.Windowed(
+                Display display1, Vector2ic size1, Vector2ic position1
+        )) {
+            size = new Vector3i(size1, 0);
+            if (position1 == GraphicsContext.VideoMode.Windowed.Centered || position1 == null) {
+                GlfwDisplay tmpDisplay = (GlfwDisplay) (display1 != null ? display1 : display());
                 Display.VideoMode tmpVideoMode = tmpDisplay.videoMode();
                 position = new Vector2i(
                         (tmpVideoMode.resolution().x() - size.x()) / 2,
                         (tmpVideoMode.resolution().y() - size.y()) / 2);
             } else {
-                position = windowed.position();
+                position = position1;
             }
-        } else if (videoMode instanceof GraphicsContext.VideoMode.WindowedFullscreen windowedFullscreen) {
+        } else if (videoMode instanceof GraphicsContext.VideoMode.WindowedFullscreen(Display displayTmp)) {
             GlfwDisplay tmpDisplay =
-                    (GlfwDisplay) (windowedFullscreen.display() != null ? windowedFullscreen.display() : display());
+                    (GlfwDisplay) (displayTmp != null ? displayTmp : display());
             size = new Vector3i(
                     tmpDisplay.videoMode().resolution(), tmpDisplay.videoMode().refreshRate());
             position = new Vector2i(0, 0);
