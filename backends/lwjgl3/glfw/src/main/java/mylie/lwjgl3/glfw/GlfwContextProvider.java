@@ -7,8 +7,6 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import mylie.component.ComponentManager;
@@ -17,8 +15,8 @@ import mylie.graphics.Display;
 import mylie.graphics.GraphicsContext;
 import mylie.graphics.GraphicsContextConfiguration;
 import mylie.input.InputManager;
-import mylie.math.Vector2i;
-import mylie.math.Vector2ic;
+import org.joml.Vector2i;
+import org.joml.Vector2ic;
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
 import org.lwjgl.glfw.GLFW;
@@ -30,7 +28,7 @@ import org.lwjgl.stb.STBImage;
 @Getter
 public abstract class GlfwContextProvider extends ContextProvider implements GLFWErrorCallbackI {
 	private final List<Display> displays = new ArrayList<>();
-	private final GlfwInputProvider inputProvider = new GlfwInputProvider();
+	private GlfwInputProvider inputProvider;
 	private Display display;
 
 	public void onInitialize(ComponentManager componentManager) {
@@ -52,10 +50,16 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
 		GraphicsContext.Option.VideoMode = new GlfwContext.GlfwOption<>("VideoMode", -1, this::setVideoModeWrapper,
 				null);
 		GraphicsContext.Option.Icons = new GlfwContext.GlfwOption<>("Icons", -1, this::setIconsWrapper, null);
+		GraphicsContext.Option.Cursor = new GlfwContext.GlfwOption<>("CursorMode", -1, this::setCursorModeWrapper,
+				GraphicsContext.Option.CursorMode.Normal);
 
 		displays.addAll(GlfwUtil.getDisplays());
 		display = GlfwUtil.getDisplay(GLFW.glfwGetPrimaryMonitor());
-		Objects.requireNonNull(componentManager.getComponent(InputManager.class)).addInputProvider(inputProvider);
+		InputManager inputManager = componentManager.getComponent(InputManager.class);
+		if (inputManager != null) {
+			inputProvider = new GlfwInputProvider(inputManager);
+			inputManager.addInputProvider(inputProvider);
+		}
 	}
 
 	protected void setupContext(GlfwContext context) {
@@ -140,6 +144,7 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
 		contexts.properties().property(GraphicsContext.Properties.Size, size);
 		contexts.properties().property(GraphicsContext.Properties.FrameBufferSize, size);
 		contexts.callbacks(new GlfwCallbacks(contexts, inputProvider));
+		setCursorModeWrapper(window, configuration.option(GraphicsContext.Option.Cursor));
 		GLFW.glfwShowWindow(window);
 		return true;
 	}
@@ -205,6 +210,15 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
 				STBImage.stbi_image_free(imageBuffers[i]);
 			}
 		}
+	}
+
+	public void setCursorModeWrapper(Long handle, GraphicsContext.Option.CursorMode cursorMode) {
+		int mode = switch (cursorMode) {
+			case Normal -> GLFW.GLFW_CURSOR_NORMAL;
+			case Hidden -> GLFW.GLFW_CURSOR_HIDDEN;
+			case Disabled -> GLFW.GLFW_CURSOR_DISABLED;
+		};
+		GLFW.glfwSetInputMode(handle, GLFW.GLFW_CURSOR, mode);
 	}
 
 	private void swapIntervalWrapper(long window, boolean vsync) {

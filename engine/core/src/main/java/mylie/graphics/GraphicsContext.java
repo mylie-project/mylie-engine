@@ -6,12 +6,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import mylie.async.*;
 import mylie.core.components.Scheduler;
-import mylie.math.Vector2i;
-import mylie.math.Vector2ic;
 import mylie.util.configuration.Configurable;
 import mylie.util.properties.PropertiesAA;
 import mylie.util.properties.Property;
 import mylie.util.versioned.AutoIncremented;
+import org.joml.Vector2i;
+import org.joml.Vector2ic;
 
 @Getter(AccessLevel.PACKAGE)
 public abstract class GraphicsContext
@@ -87,6 +87,10 @@ public abstract class GraphicsContext
 		public static Option<String> Title;
 		public static Option<VideoMode> VideoMode;
 		public static Option<Icons> Icons;
+		public static Option<CursorMode> Cursor;
+		public enum CursorMode {
+			Normal, Hidden, Disabled
+		}
 	}
 
 	public static class Properties<T> extends Property<GraphicsContext, T> {
@@ -100,6 +104,7 @@ public abstract class GraphicsContext
 		public static final Properties<Boolean> Close = new Properties<>("ShouldClose");
 		public static final Properties<Vector2ic> Position = new Properties<>("Position");
 		public static final Properties<Vector2ic> FrameBufferSize = new Properties<>("FrameBufferSize");
+
 	}
 
 	/**

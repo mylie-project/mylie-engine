@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import mylie.math.Vector2ic;
-import mylie.math.Vector4ic;
+import org.joml.Vector2ic;
+import org.joml.Vector4ic;
 
 @AllArgsConstructor
 @Getter

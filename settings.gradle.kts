@@ -3,9 +3,6 @@ rootProject.name = "mylie.engine"
 include("core")
 project(":core").projectDir=file("engine/core")
 
-include("math")
-project(":math").projectDir=file("engine/math")
-
 include("platform.desktop")
 project(":platform.desktop").projectDir=file("engine/platforms/desktop")
 
