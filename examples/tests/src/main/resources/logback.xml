@@ -9,7 +9,7 @@
     </appender>
 
     <logger name="mylie.lwjgl3.glfw" level="trace"/>
-    <root level="info">
+    <root level="trace">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

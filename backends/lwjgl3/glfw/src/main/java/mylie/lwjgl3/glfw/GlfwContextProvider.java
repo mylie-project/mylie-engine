@@ -15,6 +15,7 @@ import mylie.graphics.ContextProvider;
 import mylie.graphics.Display;
 import mylie.graphics.GraphicsContext;
 import mylie.graphics.GraphicsContextConfiguration;
+import mylie.input.InputManager;
 import mylie.math.Vector2i;
 import mylie.math.Vector2ic;
 import org.joml.Vector3i;
@@ -53,6 +54,7 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
 
         displays.addAll(GlfwUtil.getDisplays());
         display = GlfwUtil.getDisplay(GLFW.glfwGetPrimaryMonitor());
+        componentManager.getComponent(InputManager.class).addInputProvider(inputProvider);
     }
 
     protected void setupContext(GlfwContext context) {

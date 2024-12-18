@@ -46,22 +46,10 @@ public class HelloEngine extends BaseApplication {
 
     @Override
     public void onUpdate(Timer.Time time) {
-        Async.async(
-                        new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No),
-                        -1,
-                        new Functions.F0<>("asdf") {
-                            @Override
-                            protected Object run(Object object) {
-                                GLFW.glfwPollEvents();
-                                return new Object();
-                            }
-                        },
-                        null)
-                .result();
         log.trace("HelloEngine updated.");
-        //if (time.version() == 10) {
-        //    component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("All done"));
-        //}
+        if (time.version() == 10) {
+            component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("All done"));
+        }
     }
 
     @Override

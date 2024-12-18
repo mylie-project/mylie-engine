@@ -11,6 +11,7 @@ import mylie.async.Scheduler;
 import mylie.async.SchedulerNoThreading;
 import mylie.component.ComponentManager;
 import mylie.graphics.GraphicsModule;
+import mylie.input.InputModule;
 import mylie.util.properties.Properties;
 import mylie.util.properties.PropertiesAA;
 import mylie.util.versioned.AutoIncremented;
@@ -81,6 +82,7 @@ public class Core implements PropertiesAA<Engine, Engine.Property<?>> {
     }
 
     private void initComponents() {
+        componentManager.addComponent(new InputModule());
         componentManager.addComponent(new ApplicationModule());
         componentManager.addComponent(new GraphicsModule());
     }

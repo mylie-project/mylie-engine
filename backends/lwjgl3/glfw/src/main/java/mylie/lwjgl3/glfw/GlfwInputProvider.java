@@ -1,12 +1,42 @@
 package mylie.lwjgl3.glfw;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import mylie.async.*;
+import mylie.core.Engine;
 import mylie.graphics.GraphicsContext;
+import mylie.input.InputEvent;
+import mylie.input.InputProvider;
 import mylie.math.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @Slf4j
-public class GlfwInputProvider {
+public class GlfwInputProvider implements InputProvider {
+    private final ExecutionMode executionMode=new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.OneFrame);
+    @Setter
+    private List<InputEvent> eventList=null;
+    @Override
+    public Result<List<InputEvent>> inputEvents() {
+        return Async.async(executionMode, -1, PollEvents, this);
+    }
+
+
+    private static final Functions.F0<List<InputEvent>, GlfwInputProvider> PollEvents =
+            new Functions.F0<>("PollEvents") {
+                @Override
+                protected List<InputEvent> run(GlfwInputProvider inputProvider) {
+                    List<InputEvent> inputEvents=new LinkedList<>();
+                    inputProvider.eventList(inputEvents);
+                    GLFW.glfwPollEvents();
+                    inputProvider.eventList(null);
+                    return inputEvents;
+                }
+            };
+
+
     public void keyCallback(GlfwContext window, int keycode, int scancode, int action, int mods) {
         log.trace(
                 "Key Callback: window={}, keycode={}, scancode={}, action={}, mods={}",
@@ -140,4 +170,6 @@ public class GlfwInputProvider {
         ContextProperties.Position.set(context, position, timer.time().frameId());
         eventList.add(new InputEvent.Window.Position(context, position));*/
     }
+
+
 }

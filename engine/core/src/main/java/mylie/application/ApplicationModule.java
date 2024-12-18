@@ -11,6 +11,7 @@ import mylie.component.Lifecycle;
 import mylie.core.Engine;
 import mylie.core.Timer;
 import mylie.core.components.Scheduler;
+import mylie.input.InputModule;
 
 @Slf4j
 public final class ApplicationModule extends BaseCoreComponent implements Lifecycle.InitDestroy, Lifecycle.Update {
@@ -23,6 +24,7 @@ public final class ApplicationModule extends BaseCoreComponent implements Lifecy
 
     @Override
     public void onInit() {
+        runAfter(InputModule.class);
         application = engineOption(Engine.Options.Application);
         if (application instanceof BaseApplication baseApplication) {
             baseApplication.componentManager(componentManager());
