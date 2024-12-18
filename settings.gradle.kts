@@ -9,6 +9,12 @@ project(":math").projectDir=file("engine/math")
 include("platform.desktop")
 project(":platform.desktop").projectDir=file("engine/platforms/desktop")
 
+include("lwjgl3.glfw")
+project(":lwjgl3.glfw").projectDir=file("backends/lwjgl3/glfw")
+
+include("lwjgl3.opengl")
+project(":lwjgl3.opengl").projectDir=file("backends/lwjgl3/opengl")
+
 include("examples.tests")
 project(":examples.tests").projectDir=file("examples/tests")
 

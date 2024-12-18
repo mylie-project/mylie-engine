@@ -1,10 +1,6 @@
 package mylie.component;
 
-import mylie.core.Core;
 import mylie.core.EngineConfiguration;
-import mylie.util.configuration.Option;
-import mylie.util.properties.Property;
-import mylie.util.versioned.Versioned;
 
 public class BaseCoreComponent extends BaseComponent implements CoreComponent {
 
@@ -12,7 +8,7 @@ public class BaseCoreComponent extends BaseComponent implements CoreComponent {
         return componentManager().getComponent(type);
     }
 
-    protected <T extends Component> void addComponent(T component) {
+    protected <T extends Component> void component(T component) {
         componentManager().addComponent(component);
     }
 
@@ -20,12 +16,8 @@ public class BaseCoreComponent extends BaseComponent implements CoreComponent {
         componentManager().removeComponent(component);
     }
 
-    protected <T> T engineOption(Option<T, EngineConfiguration> option) {
-        return option.get(componentManager().core().configuration());
-    }
-
-    protected <T> Versioned<T> engineProperty(Property<T, Core> property) {
-        return property.get(componentManager().core());
+    protected <T> T engineOption(EngineConfiguration.EngineOption<T> option) {
+        return componentManager().core().configuration().option(option);
     }
 
     protected ComponentManager componentManager() {

@@ -13,7 +13,7 @@ import mylie.core.Timer;
 import mylie.core.components.Scheduler;
 
 @Slf4j
-public class ApplicationComponent extends BaseCoreComponent implements Lifecycle.InitDestroy, Lifecycle.Update {
+public final class ApplicationModule extends BaseCoreComponent implements Lifecycle.InitDestroy, Lifecycle.Update {
     private Application application;
     private final ExecutionMode appExecutionMode =
             new ExecutionMode(ExecutionMode.Mode.Async, Application.Target, Caches.OneFrame);
@@ -27,7 +27,7 @@ public class ApplicationComponent extends BaseCoreComponent implements Lifecycle
         if (application instanceof BaseApplication baseApplication) {
             baseApplication.componentManager(componentManager());
         }
-        addComponent(application);
+        component(application);
         component(Scheduler.class).registerTarget(Application.Target, applicationQueue::add);
         applicationThread = component(Scheduler.class).createThread(Application.Target, applicationQueue);
     }
@@ -44,14 +44,14 @@ public class ApplicationComponent extends BaseCoreComponent implements Lifecycle
     public void onUpdate(Timer.Time time) {
         if (!initialized) {
             initialized = true;
-            Async.async(appExecutionMode, time.version(), InitApplication, application, this::addComponent);
+            Async.async(appExecutionMode, time.version(), InitApplication, application, this::component);
         }
         Wait.wait(Async.async(appExecutionMode, time.version(), UpdateApplication, application, time));
     }
 
     @Override
     public String toString() {
-        return "ApplicationComponent";
+        return "ApplicationModule";
     }
 
     private static final Functions.F1<Async.Void, Application, Consumer<? extends AppComponent>> InitApplication =

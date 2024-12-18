@@ -1,34 +1,51 @@
 package mylie.util.properties;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import mylie.util.configuration.Option;
 import mylie.util.versioned.Versioned;
 
-/**
- * An abstract class representing a container for managing properties and their associated values
- * within a specified context or domain. This class provides mechanisms to set and retrieve
- * versioned values tied to specific properties.
- *
- * @param <S> The type representing the context or domain for which properties are managed.
- */
-public abstract class Properties<S> {
-    Properties() {}
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-    /**
-     * Sets a value to the specified property within the context or domain.
-     *
-     * @param <T> The type of the value to be set for the property.
-     * @param property The property to which the value will be associated.
-     * @param value The value to assign to the given property.
-     */
-    abstract <T> void set(Property<T, S> property, T value);
+public abstract class Properties<TARGET, OPTION extends Property<TARGET, ?>> {
+    @Getter(AccessLevel.PACKAGE)
+    private final Supplier<Versioned<?>> versionedSupplier;
 
-    /**
-     * Retrieves the versioned value associated with the specified property.
-     *
-     * @param <T> The type of the value associated with the property.
-     * @param property The property for which the versioned value is to be retrieved.
-     *                 This specifies the property and its context or domain.
-     * @return A {@code Versioned<T>} object representing the value of the property,
-     *         along with its version information.
-     */
-    abstract <T> Versioned<T> get(Property<T, S> property);
+    protected Properties(Supplier<Versioned<?>> versionedSupplier) {
+        this.versionedSupplier = versionedSupplier;
+    }
+    public abstract <T> void property(Property<TARGET,T> option, T value);
+    protected abstract <T> T property(Property<TARGET, T> option);
+    protected abstract <T> Versioned.Reference<T> reference(Property<TARGET, T> option);
+
+    public static class Map<TARGET, OPTION extends Property<TARGET, ?>> extends Properties<TARGET, OPTION> {
+        private final java.util.Map<Property<TARGET,?>,Versioned<?>> dataStore=new java.util.HashMap<>();
+
+        public Map(Supplier<Versioned<?>> versionedSupplier) {
+            super(versionedSupplier);
+        }
+
+        @Override
+        public <T> void property(Property<TARGET, T> option, T value) {
+            versioned(option).value(value);
+        }
+
+        @Override
+        protected <T> T property(Property<TARGET, T> option) {
+            Versioned<T> versioned = versioned(option);
+            return versioned.value();
+        }
+
+        @Override
+        protected <T> Versioned.Reference<T> reference(Property<TARGET, T> option) {
+            Versioned<T> versioned = versioned(option);
+            return versioned.reference();
+        }
+
+        @SuppressWarnings("unchecked")
+        private <T> Versioned<T> versioned(Property<TARGET, T> option) {
+            return (Versioned<T>) dataStore.computeIfAbsent(option, targetProperty -> versionedSupplier().get());
+        }
+    }
 }

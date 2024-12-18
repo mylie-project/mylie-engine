@@ -10,10 +10,10 @@ import mylie.async.Async;
 import mylie.async.SchedulerSettings;
 import mylie.async.Target;
 import mylie.core.components.Timers;
+import mylie.graphics.ApiSettings;
 import mylie.util.BuildInfo;
 import mylie.util.Exceptions;
-import mylie.util.configuration.Option;
-import mylie.util.properties.Property;
+
 
 @Slf4j
 public class Engine {
@@ -22,14 +22,18 @@ public class Engine {
     private static final ShutdownReason RestartReason = new ShutdownReason.User("Restart");
 
     public interface Options {
-        Option<Boolean, EngineConfiguration> HandleRestarts = Factory.option(true);
-        Option<SchedulerSettings, EngineConfiguration> Scheduler = Factory.option(SchedulerSettings.VirtualThreads);
-        Option<mylie.core.Timer.Settings, EngineConfiguration> Timer = Factory.option(new Timers.NanoTimer.Settings());
-        Option<Application, EngineConfiguration> Application = Factory.option(null);
+        EngineOption<Boolean> HandleRestarts = new EngineOption<>("HandleRestarts", true);
+        EngineOption<SchedulerSettings> Scheduler = new EngineOption<>("Scheduler",SchedulerSettings.VirtualThreads);
+        EngineOption<mylie.core.Timer.Settings> Timer = new EngineOption<>("Timer",new Timers.NanoTimer.Settings());
+        EngineOption<Application> Application = new EngineOption<>("Application",null);
+        EngineOption<ApiSettings> GraphicsApi = new EngineOption<>("GraphicsApi",null);
     }
 
-    public interface Properties {
-        Property<Boolean, Core> MultiThreaded = Core.PropertiesFactory.property();
+    public static class Property<T> extends mylie.util.properties.Property<Engine,T>{
+        public Property(String name) {
+            super(name);
+        }
+        public static final Property<Boolean> MultiThreaded=new Property<>("MultiThreaded");
     }
 
     public static ShutdownReason start(EngineConfiguration configuration) {
@@ -45,7 +49,7 @@ public class Engine {
                 log.info("Engine shutdown: {}", shutdownReason.reason());
                 break;
             }
-            if (shutdownReason == RestartReason && Options.HandleRestarts.get(configuration)) {
+            if (shutdownReason == RestartReason && configuration.option(Options.HandleRestarts)) {
                 restart = true;
                 log.info("Engine restart");
             }

@@ -6,6 +6,7 @@ import mylie.application.BaseApplication;
 import mylie.async.SchedulerSettings;
 import mylie.component.AppComponent;
 import mylie.core.*;
+import mylie.lwjgl3.opengl.Lwjgl3OpenGlSettings;
 import mylie.platform.desktop.Desktop;
 
 @Slf4j
@@ -13,8 +14,8 @@ public class HelloEngine extends BaseApplication {
 
     public static void main(String[] args) {
         EngineConfiguration configuration = Platform.initialize(new Desktop());
-        Engine.Options.Application.set(configuration, new HelloEngine());
-        Engine.Options.Scheduler.set(configuration, SchedulerSettings.VirtualThreads);
+        configuration.option(Engine.Options.Application,new HelloEngine());
+        configuration.option(Engine.Options.GraphicsApi,new Lwjgl3OpenGlSettings());
         Engine.ShutdownReason shutdownReason = Engine.start(configuration);
     }
 

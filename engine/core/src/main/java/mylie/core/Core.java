@@ -6,26 +6,24 @@ import java.util.concurrent.TimeUnit;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import mylie.application.ApplicationComponent;
+import mylie.application.ApplicationModule;
 import mylie.async.Scheduler;
 import mylie.async.SchedulerNoThreading;
 import mylie.component.ComponentManager;
-import mylie.util.properties.MapBasedPropertiesFactory;
+import mylie.graphics.GraphicsModule;
 import mylie.util.properties.Properties;
-import mylie.util.properties.PropertiesFactory;
+import mylie.util.properties.PropertiesAA;
 import mylie.util.versioned.AutoIncremented;
 
-@Slf4j
-public class Core {
-    static final PropertiesFactory<Core> PropertiesFactory =
-            new MapBasedPropertiesFactory<>(Core::properties, AutoIncremented::new);
 
-    @Getter(AccessLevel.PUBLIC)
-    private final Properties<Core> properties = PropertiesFactory.properties();
+@Slf4j
+public class Core implements PropertiesAA<Engine,Engine.Property<?>> {
+
 
     @Getter(AccessLevel.PUBLIC)
     private final EngineConfiguration configuration;
-
+    @Getter(AccessLevel.PUBLIC)
+    private final Properties<Engine,Engine.Property<?>> properties=new Properties.Map<>(AutoIncremented::new);
     private final ComponentManager componentManager;
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private Scheduler scheduler;
@@ -45,7 +43,7 @@ public class Core {
         initComponents();
         Thread updateThread = new Thread(this::updateLoop);
         updateThread.setName("Update Loop");
-        if (Engine.Properties.MultiThreaded.get(this).value()) {
+        if (property(Engine.Property.MultiThreaded)) {
             updateThread.start();
             while (updateThread.isAlive()) {
                 try {
@@ -82,17 +80,18 @@ public class Core {
     }
 
     private void initComponents() {
-        componentManager.addComponent(new ApplicationComponent());
+        componentManager.addComponent(new ApplicationModule());
+        componentManager.addComponent(new GraphicsModule());
     }
 
     private void initTimer() {
-        timer = Engine.Options.Timer.get(configuration).build();
+        timer = configuration.option(Engine.Options.Timer).build();
         componentManager.addComponent(timer);
     }
 
     private void initScheduler() {
-        scheduler = Engine.Options.Scheduler.get(configuration).build();
-        Engine.Properties.MultiThreaded.set(this, !(scheduler instanceof SchedulerNoThreading));
+        scheduler=configuration.option(Engine.Options.Scheduler).build();
+        properties().property(Engine.Property.MultiThreaded, !(scheduler instanceof SchedulerNoThreading));
         scheduler.registerTarget(Engine.Target, tasks::add);
         componentManager.addComponent(new mylie.core.components.Scheduler(scheduler));
     }
