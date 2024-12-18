@@ -6,6 +6,9 @@ import lombok.Setter;
 import mylie.async.*;
 import mylie.core.Timer;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public abstract class BaseComponent implements Component {
     @Setter(AccessLevel.PACKAGE)
     @Getter(AccessLevel.PACKAGE)
@@ -18,6 +21,9 @@ public abstract class BaseComponent implements Component {
     private ExecutionMode executionMode =
             new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
 
+    @Getter(AccessLevel.PACKAGE)
+    private List<BaseComponent> dependencies = new CopyOnWriteArrayList<>();
+
     Result<Async.Void> update(Timer.Time time) {
         return Async.async(executionMode, time.version(), UpdateComponent, this, time);
     }
@@ -26,10 +32,13 @@ public abstract class BaseComponent implements Component {
         return Async.async(executionMode, time.version(), DestroyComponent, this, time);
     }
 
+
+
     private final Functions.F1<Async.Void, BaseComponent, Timer.Time> UpdateComponent =
             new Functions.F1<>("UpdateComponent") {
                 @Override
                 protected Async.Void run(BaseComponent component, Timer.Time time) {
+                    Wait.wait(Async.async(dependencies, BaseComponent.class, BaseComponent::update, time));
                     if (!component.initialized) {
                         component.initialized = true;
                         if (component instanceof Lifecycle.InitDestroy initDestroy) {

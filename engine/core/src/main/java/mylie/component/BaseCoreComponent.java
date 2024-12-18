@@ -23,4 +23,11 @@ public class BaseCoreComponent extends BaseComponent implements CoreComponent {
     protected ComponentManager componentManager() {
         return super.componentManager();
     }
+
+    protected void runAfter(Class<? extends Component> component){
+        Component theComponent = component(component);
+        if(theComponent instanceof BaseComponent baseComponent){
+            dependencies().add(baseComponent);
+        }
+    }
 }

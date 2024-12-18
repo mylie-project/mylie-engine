@@ -13,7 +13,9 @@ import mylie.graphics.GraphicsContextConfiguration;
 import mylie.graphics.GraphicsManager;
 import mylie.lwjgl3.opengl.Lwjgl3OpenGlSettings;
 import mylie.math.Vector2i;
+import mylie.math.Vector2ic;
 import mylie.platform.desktop.Desktop;
+import mylie.util.versioned.Versioned;
 import org.lwjgl.glfw.GLFW;
 
 @Slf4j
@@ -37,9 +39,8 @@ public class HelloEngine extends BaseApplication {
         gcc.option(GraphicsContext.Option.AlwaysOnTop, true);
         gcc.option(GraphicsContext.Option.Title, "Hello Engine");
         gcc.option(GraphicsContext.Option.VideoMode, windowed);
-        gcc.option(GraphicsContext.Option.VSync, true);
+        gcc.option(GraphicsContext.Option.VSync, false);
         gcc.option(GraphicsContext.Option.Icons, IconFactory.getDefaultIcons());
-        context = component(GraphicsManager.class).createContext(gcc, true);
         context = component(GraphicsManager.class).createContext(gcc, true);
     }
 
@@ -58,9 +59,9 @@ public class HelloEngine extends BaseApplication {
                         null)
                 .result();
         log.trace("HelloEngine updated.");
-        if (time.version() == 10) {
-            component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("All done"));
-        }
+        //if (time.version() == 10) {
+        //    component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("All done"));
+        //}
     }
 
     @Override

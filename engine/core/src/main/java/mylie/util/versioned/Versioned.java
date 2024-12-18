@@ -73,7 +73,7 @@ public sealed interface Versioned<T> permits AutoIncremented {
          *
          * @return The current value of type T, updated if a version mismatch is detected.
          */
-        T value() {
+        public T value() {
             if (parent.version() != version) {
                 value = parent.value();
                 version = parent.version();
@@ -88,7 +88,7 @@ public sealed interface Versioned<T> permits AutoIncremented {
          *
          * @return true if the current version differs from the parent's version, false otherwise.
          */
-        boolean changed() {
+        public boolean changed() {
             return parent.version() != version;
         }
     }

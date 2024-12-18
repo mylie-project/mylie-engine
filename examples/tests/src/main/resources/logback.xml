@@ -8,7 +8,8 @@
         </encoder>
     </appender>
 
-    <root level="trace">
+    <logger name="mylie.lwjgl3.glfw" level="trace"/>
+    <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

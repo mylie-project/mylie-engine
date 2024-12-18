@@ -93,6 +93,7 @@ public abstract class GraphicsContext
         public static final Properties<Vector2ic> Size = new Properties<>("Size");
         public static final Properties<Boolean> Focus = new Properties<>("Focus");
         public static final Properties<Boolean> Maximized = new Properties<>("Maximized");
+        public static final Properties<Boolean> Close = new Properties<>("ShouldClose");
         public static final Properties<Vector2ic> Position = new Properties<>("Position");
         public static final Properties<Vector2ic> FrameBufferSize = new Properties<>("FrameBufferSize");
     }
@@ -144,4 +145,9 @@ public abstract class GraphicsContext
     }
 
     public record Icons(String... paths) {}
+
+    @Override
+    public String toString() {
+        return target.name();
+    }
 }

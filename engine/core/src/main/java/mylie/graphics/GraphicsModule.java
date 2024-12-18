@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import mylie.application.ApplicationModule;
 import mylie.async.Async;
 import mylie.async.Result;
 import mylie.component.BaseCoreComponent;
@@ -63,7 +64,9 @@ public class GraphicsModule extends BaseCoreComponent
     }
 
     @Override
-    public void onInit() {}
+    public void onInit() {
+        runAfter(ApplicationModule.class);
+    }
 
     @Override
     public void onDestroy() {

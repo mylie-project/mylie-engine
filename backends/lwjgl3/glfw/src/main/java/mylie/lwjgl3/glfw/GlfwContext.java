@@ -17,7 +17,8 @@ import org.lwjgl.system.MemoryUtil;
 @Getter(AccessLevel.PACKAGE)
 public class GlfwContext extends GraphicsContext {
     private static final ExecutionMode engine = new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No);
-
+    @Setter(AccessLevel.PACKAGE)
+    private GlfwCallbacks callbacks;
     @Setter(AccessLevel.PACKAGE)
     private long handle;
 
@@ -114,7 +115,6 @@ public class GlfwContext extends GraphicsContext {
     public static final Functions.F0<Async.Void, GlfwContext> SwapBuffers = new Functions.F0<>("SwapBuffers") {
         @Override
         protected Async.Void run(GlfwContext context) {
-            log.trace("SwapBuffers");
             GLFW.glfwSwapBuffers(context.handle);
             return Async.VOID;
         }

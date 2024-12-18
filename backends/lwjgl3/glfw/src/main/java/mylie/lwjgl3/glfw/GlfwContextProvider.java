@@ -28,6 +28,7 @@ import org.lwjgl.stb.STBImage;
 @Getter
 public abstract class GlfwContextProvider extends ContextProvider implements GLFWErrorCallbackI {
     private final List<Display> displays = new ArrayList<>();
+    private final GlfwInputProvider inputProvider=new GlfwInputProvider();
     private Display display;
 
     public void onInitialize(ComponentManager componentManager) {
@@ -138,6 +139,7 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
         contexts.properties().property(GraphicsContext.Properties.Position, position);
         contexts.properties().property(GraphicsContext.Properties.Size, size);
         contexts.properties().property(GraphicsContext.Properties.FrameBufferSize, size);
+        contexts.callbacks(new GlfwCallbacks(contexts,inputProvider));
         GLFW.glfwShowWindow(window);
         return true;
     }
