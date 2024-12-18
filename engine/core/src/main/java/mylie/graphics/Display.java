@@ -23,19 +23,15 @@ public class Display {
 
         @Override
         public String toString() {
-            return "VideoMode{" +
-                    "resolution=" + resolution +
-                    ", refreshRate=" + refreshRate +
-                    ", format=" + format +
-                    '}';
+            return "VideoMode{" + "resolution="
+                    + resolution + ", refreshRate="
+                    + refreshRate + ", format="
+                    + format + '}';
         }
     }
 
     @Override
     public String toString() {
-        return "Display{" +
-                "primary=" + primary +
-                ", videoMode=" + videoMode +
-                '}';
+        return "Display{" + "primary=" + primary + ", videoMode=" + videoMode + '}';
     }
 }

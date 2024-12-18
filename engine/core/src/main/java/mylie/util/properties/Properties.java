@@ -1,12 +1,9 @@
 package mylie.util.properties;
 
+import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
-import mylie.util.configuration.Option;
 import mylie.util.versioned.Versioned;
-
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class Properties<TARGET, OPTION extends Property<TARGET, ?>> {
     @Getter(AccessLevel.PACKAGE)
@@ -15,12 +12,16 @@ public abstract class Properties<TARGET, OPTION extends Property<TARGET, ?>> {
     protected Properties(Supplier<Versioned<?>> versionedSupplier) {
         this.versionedSupplier = versionedSupplier;
     }
-    public abstract <T> void property(Property<TARGET,T> option, T value);
+
+    public abstract <T> void property(Property<TARGET, T> option, T value);
+
     protected abstract <T> T property(Property<TARGET, T> option);
+
     protected abstract <T> Versioned.Reference<T> reference(Property<TARGET, T> option);
 
+
     public static class Map<TARGET, OPTION extends Property<TARGET, ?>> extends Properties<TARGET, OPTION> {
-        private final java.util.Map<Property<TARGET,?>,Versioned<?>> dataStore=new java.util.HashMap<>();
+        private final java.util.Map<Property<TARGET, ?>, Versioned<?>> dataStore = new java.util.HashMap<>();
 
         public Map(Supplier<Versioned<?>> versionedSupplier) {
             super(versionedSupplier);
@@ -45,7 +46,8 @@ public abstract class Properties<TARGET, OPTION extends Property<TARGET, ?>> {
 
         @SuppressWarnings("unchecked")
         private <T> Versioned<T> versioned(Property<TARGET, T> option) {
-            return (Versioned<T>) dataStore.computeIfAbsent(option, targetProperty -> versionedSupplier().get());
+            return (Versioned<T>) dataStore.computeIfAbsent(
+                    option, targetProperty -> versionedSupplier().get());
         }
     }
 }

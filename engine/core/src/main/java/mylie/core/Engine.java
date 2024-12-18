@@ -14,7 +14,6 @@ import mylie.graphics.ApiSettings;
 import mylie.util.BuildInfo;
 import mylie.util.Exceptions;
 
-
 @Slf4j
 public class Engine {
     public static final BuildInfo buildInfo = new BuildInfo();
@@ -23,17 +22,18 @@ public class Engine {
 
     public interface Options {
         EngineOption<Boolean> HandleRestarts = new EngineOption<>("HandleRestarts", true);
-        EngineOption<SchedulerSettings> Scheduler = new EngineOption<>("Scheduler",SchedulerSettings.VirtualThreads);
-        EngineOption<mylie.core.Timer.Settings> Timer = new EngineOption<>("Timer",new Timers.NanoTimer.Settings());
-        EngineOption<Application> Application = new EngineOption<>("Application",null);
-        EngineOption<ApiSettings> GraphicsApi = new EngineOption<>("GraphicsApi",null);
+        EngineOption<SchedulerSettings> Scheduler = new EngineOption<>("Scheduler", SchedulerSettings.VirtualThreads);
+        EngineOption<mylie.core.Timer.Settings> Timer = new EngineOption<>("Timer", new Timers.NanoTimer.Settings());
+        EngineOption<Application> Application = new EngineOption<>("Application", null);
+        EngineOption<ApiSettings> GraphicsApi = new EngineOption<>("GraphicsApi", null);
     }
 
-    public static class Property<T> extends mylie.util.properties.Property<Engine,T>{
+    public static class Property<T> extends mylie.util.properties.Property<Engine, T> {
         public Property(String name) {
             super(name);
         }
-        public static final Property<Boolean> MultiThreaded=new Property<>("MultiThreaded");
+
+        public static final Property<Boolean> MultiThreaded = new Property<>("MultiThreaded");
     }
 
     public static ShutdownReason start(EngineConfiguration configuration) {

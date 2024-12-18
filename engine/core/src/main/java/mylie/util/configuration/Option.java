@@ -1,6 +1,6 @@
 package mylie.util.configuration;
 
-public abstract class Option<O,T> {
+public abstract class Option<O, T> {
     final String name;
     final T defaultValue;
 

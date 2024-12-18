@@ -1,3 +1,6 @@
 package mylie.async;
 
-public interface ManagedThread {}
+public interface ManagedThread {
+    void start();
+    void stop();
+}

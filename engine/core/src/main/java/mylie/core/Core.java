@@ -15,15 +15,15 @@ import mylie.util.properties.Properties;
 import mylie.util.properties.PropertiesAA;
 import mylie.util.versioned.AutoIncremented;
 
-
 @Slf4j
-public class Core implements PropertiesAA<Engine,Engine.Property<?>> {
-
+public class Core implements PropertiesAA<Engine, Engine.Property<?>> {
 
     @Getter(AccessLevel.PUBLIC)
     private final EngineConfiguration configuration;
+
     @Getter(AccessLevel.PUBLIC)
-    private final Properties<Engine,Engine.Property<?>> properties=new Properties.Map<>(AutoIncremented::new);
+    private final Properties<Engine, Engine.Property<?>> properties = new Properties.Map<>(AutoIncremented::new);
+
     private final ComponentManager componentManager;
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private Scheduler scheduler;
@@ -67,6 +67,7 @@ public class Core implements PropertiesAA<Engine,Engine.Property<?>> {
         Timer.Time time = null;
         while (shutdownReason == null) {
             frameId++;
+            log.debug("############ Frame<{}> ############",frameId);
             scheduler.version(frameId);
             time = timer.update(frameId);
             componentManager.update(time);
@@ -90,7 +91,7 @@ public class Core implements PropertiesAA<Engine,Engine.Property<?>> {
     }
 
     private void initScheduler() {
-        scheduler=configuration.option(Engine.Options.Scheduler).build();
+        scheduler = configuration.option(Engine.Options.Scheduler).build();
         properties().property(Engine.Property.MultiThreaded, !(scheduler instanceof SchedulerNoThreading));
         scheduler.registerTarget(Engine.Target, tasks::add);
         componentManager.addComponent(new mylie.core.components.Scheduler(scheduler));

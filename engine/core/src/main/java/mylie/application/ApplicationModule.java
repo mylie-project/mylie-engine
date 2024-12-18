@@ -30,6 +30,7 @@ public final class ApplicationModule extends BaseCoreComponent implements Lifecy
         component(application);
         component(Scheduler.class).registerTarget(Application.Target, applicationQueue::add);
         applicationThread = component(Scheduler.class).createThread(Application.Target, applicationQueue);
+        applicationThread.start();
     }
 
     @Override

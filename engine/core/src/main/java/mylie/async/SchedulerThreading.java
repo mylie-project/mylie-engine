@@ -23,7 +23,6 @@ public class SchedulerThreading extends Scheduler {
     public ManagedThread createThread(Target target, BlockingQueue<Runnable> queue) {
         ManagedThreadThreading managedThread = new ManagedThreadThreading(target, queue, managedThreadList);
         managedThreadList.add(managedThread);
-        managedThread.start();
         return managedThread;
     }
 

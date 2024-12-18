@@ -35,14 +35,15 @@ public class ManagedThreadThreading implements ManagedThread {
                 log.error("Error while executing tasks: {}", e.getMessage(), e);
             }
         }
+        log.trace("Thread shutdown complete");
         managedThreadList.remove(this);
     }
 
-    void start() {
+    public void start() {
         thread.start();
     }
 
-    void stop() {
+    public void stop() {
         CountDownLatch latch = new CountDownLatch(1);
         queue.add(() -> {
             running = false;

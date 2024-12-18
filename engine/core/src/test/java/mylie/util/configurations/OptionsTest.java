@@ -10,17 +10,18 @@ import org.junit.jupiter.api.Test;
 public class OptionsTest {
 
     public static class TestObject implements Configurable<TestObject, TestObject.Option<?>> {
-        private final Configurations<TestObject,Option<?>> configurations =new Configurations.Map<>();
+        private final Configurations<TestObject, Option<?>> configurations = new Configurations.Map<>();
 
         @Override
         public Configurations<TestObject, Option<?>> configuration() {
             return configurations;
         }
 
-        public static class Option<T> extends mylie.util.configuration.Option<TestObject,T> {
+        public static class Option<T> extends mylie.util.configuration.Option<TestObject, T> {
             public Option(String name, T defaultValue) {
                 super(name, defaultValue);
             }
+
             public static final Option<String> StringOption = new Option<>("StringOption", null);
             public static final Option<Integer> IntegerOption = new Option<>("IntegerOption", null);
             public static final Option<Integer> IntegerOptionNotNull = new Option<>("IntegerOptionNotNull", 1);
@@ -30,17 +31,14 @@ public class OptionsTest {
     @Test
     void testStringOptionDefault() {
         OptionsTest.TestObject testObject = new OptionsTest.TestObject();
-        assertNull(
-                testObject.option(TestObject.Option.StringOption),
-                "Default value for StringOption should be null");
+        assertNull(testObject.option(TestObject.Option.StringOption), "Default value for StringOption should be null");
     }
 
     @Test
     void testIntegerOptionDefault() {
         OptionsTest.TestObject testObject = new OptionsTest.TestObject();
         assertNull(
-                testObject.option(TestObject.Option.IntegerOption),
-                "Default value for IntegerOption should be null");
+                testObject.option(TestObject.Option.IntegerOption), "Default value for IntegerOption should be null");
     }
 
     @Test
@@ -67,9 +65,7 @@ public class OptionsTest {
         OptionsTest.TestObject testObject = new OptionsTest.TestObject();
         testObject.option(TestObject.Option.IntegerOption, 42);
         assertEquals(
-                42,
-                testObject.option(TestObject.Option.IntegerOption),
-                "IntegerOption should return the value set");
+                42, testObject.option(TestObject.Option.IntegerOption), "IntegerOption should return the value set");
     }
 
     @Test
@@ -94,8 +90,7 @@ public class OptionsTest {
                 testObject1.option(TestObject.Option.StringOption),
                 "StringOption of testObject1 should return the value set");
         assertNull(
-                testObject2.option(TestObject.Option.StringOption),
-                "StringOption of testObject2 should remain null");
+                testObject2.option(TestObject.Option.StringOption), "StringOption of testObject2 should remain null");
 
         // Set IntegerOption for both objects and assert changes
         testObject1.option(TestObject.Option.IntegerOption, 10);

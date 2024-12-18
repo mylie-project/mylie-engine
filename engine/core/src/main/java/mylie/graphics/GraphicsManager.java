@@ -17,4 +17,8 @@ public class GraphicsManager implements AppComponent {
     public Display display() {
         return graphicsModule.api().contextProvider().display();
     }
+
+    public GraphicsContext createContext(GraphicsContextConfiguration configuration, boolean synced) {
+        return graphicsModule.createContext(configuration,synced);
+    }
 }

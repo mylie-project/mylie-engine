@@ -45,7 +45,7 @@ public final class ComponentManager {
         return this;
     }
 
-    public <T> T getComponent(Class<? extends T> type) {
+    public <T extends Component> T getComponent(Class<? extends T> type) {
         for (Component component : components) {
             if (type.isAssignableFrom(component.getClass())) {
                 return type.cast(component);

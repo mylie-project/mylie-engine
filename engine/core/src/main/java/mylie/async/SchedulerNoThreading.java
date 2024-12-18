@@ -20,6 +20,16 @@ public class SchedulerNoThreading extends Scheduler implements Scheduler.TaskExe
     public ManagedThread createThread(Target target, BlockingQueue<Runnable> queue) {
         return new ManagedThread() {
             @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void stop() {
+
+            }
+
+            @Override
             public int hashCode() {
                 return super.hashCode();
             }

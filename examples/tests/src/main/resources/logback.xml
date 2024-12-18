@@ -8,10 +8,6 @@
         </encoder>
     </appender>
 
-    <logger name="mylie.engine.core.features.async" level="info" />
-    <logger name="mylie.lwjgl3" level="info" />
-    <logger name="mylie.lwjgl3.opengl.api" level="info"/>
-    <logger name="mylie.engine.graphics" level="info" />
     <root level="trace">
         <appender-ref ref="STDOUT" />
     </root>

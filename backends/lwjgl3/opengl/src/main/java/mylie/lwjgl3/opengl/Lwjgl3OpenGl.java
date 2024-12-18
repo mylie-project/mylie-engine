@@ -16,7 +16,7 @@ public class Lwjgl3OpenGl extends OpenGl {
 
     @Override
     protected void onInitialize(ComponentManager componentManager) {
-        contextProvider = new GlfwContextProvider();
+        contextProvider = new Lwjgl3OpenGlContextProvider();
         contextProvider.onInitialize(componentManager);
     }
 }
