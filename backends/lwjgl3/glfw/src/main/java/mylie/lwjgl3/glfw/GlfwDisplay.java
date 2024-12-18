@@ -8,10 +8,10 @@ import mylie.graphics.Display;
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.PACKAGE)
 public class GlfwDisplay extends Display {
-    private final long handle;
+	private final long handle;
 
-    public GlfwDisplay(long handle, boolean primary, VideoMode videoMode) {
-        super(primary, videoMode);
-        this.handle = handle;
-    }
+	public GlfwDisplay(long handle, boolean primary, VideoMode videoMode) {
+		super(primary, videoMode);
+		this.handle = handle;
+	}
 }

@@ -6,11 +6,11 @@ import mylie.component.AppComponent;
 import mylie.core.Timer;
 
 public interface Application extends AppComponent {
-    Target Target = new Target("Application");
+	Target Target = new Target("Application");
 
-    void onInitialize(Consumer<? extends AppComponent> initializer);
+	void onInitialize(Consumer<? extends AppComponent> initializer);
 
-    void onUpdate(Timer.Time time);
+	void onUpdate(Timer.Time time);
 
-    void onShutdown();
+	void onShutdown();
 }

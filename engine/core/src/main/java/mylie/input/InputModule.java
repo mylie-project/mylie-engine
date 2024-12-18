@@ -10,28 +10,29 @@ import mylie.component.Lifecycle;
 import mylie.core.Timer;
 
 public class InputModule extends BaseCoreComponent implements Lifecycle.Update, Lifecycle.AddRemove {
-    private final InputManager inputManager;
+	private final InputManager inputManager;
 
-    @Getter(AccessLevel.PACKAGE)
-    private final List<InputProvider> inputProviders = new CopyOnWriteArrayList<>();
+	@Getter(AccessLevel.PACKAGE)
+	private final List<InputProvider> inputProviders = new CopyOnWriteArrayList<>();
 
-    public InputModule() {
-        inputManager = new InputManager(this);
-    }
+	public InputModule() {
+		inputManager = new InputManager(this);
+	}
 
-    @Override
-    public void onUpdate(Timer.Time time) {
-        List<InputEvent> events = new LinkedList<>();
-        for (InputProvider inputProvider : inputProviders) {
-            events.addAll(inputProvider.inputEvents().result());
-        }
-    }
+	@Override
+	public void onUpdate(Timer.Time time) {
+		List<InputEvent> events = new LinkedList<>();
+		for (InputProvider inputProvider : inputProviders) {
+			events.addAll(inputProvider.inputEvents().result());
+		}
+	}
 
-    @Override
-    public void onAdd() {
-        component(inputManager);
-    }
+	@Override
+	public void onAdd() {
+		component(inputManager);
+	}
 
-    @Override
-    public void onRemove() {}
+	@Override
+	public void onRemove() {
+	}
 }

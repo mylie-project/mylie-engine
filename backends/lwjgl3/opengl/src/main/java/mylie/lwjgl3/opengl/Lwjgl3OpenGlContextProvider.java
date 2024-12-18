@@ -16,38 +16,38 @@ import org.lwjgl.glfw.GLFW;
 
 @Slf4j
 public class Lwjgl3OpenGlContextProvider extends GlfwContextProvider {
-    private final ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No);
-    private mylie.core.components.Scheduler scheduler;
+	private final ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No);
+	private mylie.core.components.Scheduler scheduler;
 
-    @Override
-    public void onInitialize(ComponentManager componentManager) {
-        super.onInitialize(componentManager);
-        scheduler = componentManager.getComponent(Scheduler.class);
-    }
+	@Override
+	public void onInitialize(ComponentManager componentManager) {
+		super.onInitialize(componentManager);
+		scheduler = componentManager.getComponent(Scheduler.class);
+	}
 
-    @Override
-    public GraphicsContext createContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext) {
-        Lwjgl3OpenGlContext lwjgl3OpenGlContext = new Lwjgl3OpenGlContext(configuration, primaryContext, scheduler);
-        Async.async(executionMode, -1, CreateContext, this, lwjgl3OpenGlContext).result();
-        lwjgl3OpenGlContext.makeCurrent();
-        lwjgl3OpenGlContext.createGlCapabilities();
-        return lwjgl3OpenGlContext;
-    }
+	@Override
+	public GraphicsContext createContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext) {
+		Lwjgl3OpenGlContext lwjgl3OpenGlContext = new Lwjgl3OpenGlContext(configuration, primaryContext, scheduler);
+		Async.async(executionMode, -1, CreateContext, this, lwjgl3OpenGlContext).result();
+		lwjgl3OpenGlContext.makeCurrent();
+		lwjgl3OpenGlContext.createGlCapabilities();
+		return lwjgl3OpenGlContext;
+	}
 
-    private void setupApi(GlfwContext glfwContext) {
-        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 4);
-        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 6);
-        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
-        // todo: opengl profile selection.
-    }
+	private void setupApi(GlfwContext glfwContext) {
+		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 4);
+		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 6);
+		GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
+		// todo: opengl profile selection.
+	}
 
-    private static final Functions.F1<Boolean, Lwjgl3OpenGlContextProvider, GlfwContext> CreateContext =
-            new Functions.F1<>("CreateContext") {
-                @Override
-                protected Boolean run(Lwjgl3OpenGlContextProvider o, GlfwContext glfwContext) {
-                    o.setupContext(glfwContext);
-                    o.setupApi(glfwContext);
-                    return o.createWindow(glfwContext);
-                }
-            };
+	private static final Functions.F1<Boolean, Lwjgl3OpenGlContextProvider, GlfwContext> CreateContext = new Functions.F1<>(
+			"CreateContext") {
+		@Override
+		protected Boolean run(Lwjgl3OpenGlContextProvider o, GlfwContext glfwContext) {
+			o.setupContext(glfwContext);
+			o.setupApi(glfwContext);
+			return o.createWindow(glfwContext);
+		}
+	};
 }

@@ -15,445 +15,412 @@ import org.junit.jupiter.params.provider.MethodSource;
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class SchedulerTest {
 
-    static Stream<Scheduler> schedulerProvider() {
+	static Stream<Scheduler> schedulerProvider() {
 
-        return Stream.of(
-                new SchedulerNoThreading(),
-                new SchedulerExecutor(Executors.newVirtualThreadPerTaskExecutor(), "Virtual Thread"),
-                new SchedulerExecutor(Executors.newFixedThreadPool(1), "One Thread"),
-                new SchedulerExecutor(Executors.newScheduledThreadPool(16), "16 Threads"),
-                new SchedulerExecutor(ForkJoinPool.commonPool(), "ForkJoin-Common"));
-    }
+		return Stream.of(new SchedulerNoThreading(),
+				new SchedulerExecutor(Executors.newVirtualThreadPerTaskExecutor(), "Virtual Thread"),
+				new SchedulerExecutor(Executors.newFixedThreadPool(1), "One Thread"),
+				new SchedulerExecutor(Executors.newScheduledThreadPool(16), "16 Threads"),
+				new SchedulerExecutor(ForkJoinPool.commonPool(), "ForkJoin-Common"));
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldExecuteTaskWithoutCache(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
-        Wait.wait(
-                async(executionMode, 0, atomicIntegerIncrease, integer),
-                async(executionMode, 0, atomicIntegerIncrease, integer),
-                async(executionMode, 0, atomicIntegerIncrease, integer));
-        assertEquals(3, integer.get());
-        Wait.wait(async(executionMode, 0, atomicIntegerDecrease, integer));
-        assertEquals(2, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldExecuteTaskWithoutCache(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+		Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer),
+				async(executionMode, 0, atomicIntegerIncrease, integer),
+				async(executionMode, 0, atomicIntegerIncrease, integer));
+		assertEquals(3, integer.get());
+		Wait.wait(async(executionMode, 0, atomicIntegerDecrease, integer));
+		assertEquals(2, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldExecuteTaskWithCache(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
-        Wait.wait(
-                async(executionMode, 0, atomicIntegerIncrease, integer),
-                async(executionMode, 0, atomicIntegerIncrease, integer),
-                async(executionMode, 0, atomicIntegerIncrease, integer));
-        assertEquals(1, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldExecuteTaskWithCache(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
+		Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer),
+				async(executionMode, 0, atomicIntegerIncrease, integer),
+				async(executionMode, 0, atomicIntegerIncrease, integer));
+		assertEquals(1, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldExecuteMixedCachePolicies(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode Never = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
-        ExecutionMode OneFrame = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
-        Wait.wait(
-                async(Never, 0, atomicIntegerIncrease, integer),
-                async(OneFrame, 0, atomicIntegerIncrease, integer),
-                async(Never, 0, atomicIntegerIncrease, integer),
-                async(OneFrame, 0, atomicIntegerIncrease, integer));
-        assertEquals(3, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldExecuteMixedCachePolicies(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode Never = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+		ExecutionMode OneFrame = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
+		Wait.wait(async(Never, 0, atomicIntegerIncrease, integer), async(OneFrame, 0, atomicIntegerIncrease, integer),
+				async(Never, 0, atomicIntegerIncrease, integer), async(OneFrame, 0, atomicIntegerIncrease, integer));
+		assertEquals(3, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldExecuteTaskWithDynamicCachingAndFrameId(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
-        Wait.wait(
-                async(Versioned, 1, atomicIntegerIncrease, integer),
-                async(Versioned, 1, atomicIntegerIncrease, integer),
-                async(Versioned, 2, atomicIntegerIncrease, integer));
-        assertEquals(2, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldExecuteTaskWithDynamicCachingAndFrameId(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
+		Wait.wait(async(Versioned, 1, atomicIntegerIncrease, integer),
+				async(Versioned, 1, atomicIntegerIncrease, integer),
+				async(Versioned, 2, atomicIntegerIncrease, integer));
+		assertEquals(2, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldExecuteTaskWithDynamicCachingAndFrameId2(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
-        Wait.wait(
-                async(Versioned, 1, atomicIntegerIncrease, integer),
-                async(Versioned, 2, atomicIntegerIncrease, integer),
-                async(Versioned, 2, atomicIntegerIncrease, integer));
-        assertEquals(2, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldExecuteTaskWithDynamicCachingAndFrameId2(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
+		Wait.wait(async(Versioned, 1, atomicIntegerIncrease, integer),
+				async(Versioned, 2, atomicIntegerIncrease, integer),
+				async(Versioned, 2, atomicIntegerIncrease, integer));
+		assertEquals(2, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldExecuteTaskWithDynamicCachingAndFrameId3(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
-        Wait.wait(
-                async(Versioned, 2, atomicIntegerIncrease, integer),
-                async(Versioned, 1, atomicIntegerIncrease, integer),
-                async(Versioned, 2, atomicIntegerIncrease, integer));
-        assertEquals(1, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldExecuteTaskWithDynamicCachingAndFrameId3(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
+		Wait.wait(async(Versioned, 2, atomicIntegerIncrease, integer),
+				async(Versioned, 1, atomicIntegerIncrease, integer),
+				async(Versioned, 2, atomicIntegerIncrease, integer));
+		assertEquals(1, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldExecuteTaskWithMultipleVersions(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
-        Wait.wait(
-                async(Versioned, 1, atomicIntegerIncrease, integer),
-                async(Versioned, 1, atomicIntegerIncrease, integer),
-                async(Versioned, 3, atomicIntegerIncrease, integer));
-        assertEquals(2, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldExecuteTaskWithMultipleVersions(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode Versioned = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
+		Wait.wait(async(Versioned, 1, atomicIntegerIncrease, integer),
+				async(Versioned, 1, atomicIntegerIncrease, integer),
+				async(Versioned, 3, atomicIntegerIncrease, integer));
+		assertEquals(2, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldExecuteTasksWithMixedExecutionModes(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode Never = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
-        ExecutionMode AsyncOneFrame = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
-        Wait.wait(
-                async(Never, 0, atomicIntegerIncrease, integer),
-                async(AsyncOneFrame, 0, atomicIntegerIncrease, integer),
-                async(Never, 0, atomicIntegerIncrease, integer));
-        assertEquals(3, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldExecuteTasksWithMixedExecutionModes(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode Never = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
+		ExecutionMode AsyncOneFrame = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
+		Wait.wait(async(Never, 0, atomicIntegerIncrease, integer),
+				async(AsyncOneFrame, 0, atomicIntegerIncrease, integer),
+				async(Never, 0, atomicIntegerIncrease, integer));
+		assertEquals(3, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldRespectCacheEvictionPolicy(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode OneFrame = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
-        Wait.wait(
-                async(OneFrame, 0, atomicIntegerIncrease, integer),
-                async(OneFrame, 1, atomicIntegerIncrease, integer),
-                async(OneFrame, 1, atomicIntegerIncrease, integer));
-        assertEquals(1, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldRespectCacheEvictionPolicy(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode OneFrame = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
+		Wait.wait(async(OneFrame, 0, atomicIntegerIncrease, integer),
+				async(OneFrame, 1, atomicIntegerIncrease, integer), async(OneFrame, 1, atomicIntegerIncrease, integer));
+		assertEquals(1, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldHandleConcurrentTaskExecution(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
-        Thread thread1 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
-        Thread thread2 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
-        thread1.start();
-        thread2.start();
-        try {
-            thread1.join();
-            thread2.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        assertEquals(2, integer.get());
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldHandleConcurrentTaskExecution(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+		Thread thread1 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
+		Thread thread2 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
+		thread1.start();
+		thread2.start();
+		try {
+			thread1.join();
+			thread2.join();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		assertEquals(2, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldHandleTaskExecutionWithMultipleThreads(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldHandleTaskExecutionWithMultipleThreads(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
-        // Create multiple threads to execute tasks simultaneously
-        Thread thread1 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
-        Thread thread2 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
-        Thread thread3 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
+		// Create multiple threads to execute tasks simultaneously
+		Thread thread1 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
+		Thread thread2 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
+		Thread thread3 = new Thread(() -> Wait.wait(async(executionMode, 0, atomicIntegerIncrease, integer)));
 
-        thread1.start();
-        thread2.start();
-        thread3.start();
+		thread1.start();
+		thread2.start();
+		thread3.start();
 
-        try {
-            thread1.join();
-            thread2.join();
-            thread3.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        assertEquals(3, integer.get());
-    }
+		try {
+			thread1.join();
+			thread2.join();
+			thread3.join();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		assertEquals(3, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldTestTaskExecutionWithDifferentExecutionModes(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldTestTaskExecutionWithDifferentExecutionModes(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
 
-        ExecutionMode Direct = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
-        ExecutionMode AsyncModeCache = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
+		ExecutionMode Direct = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
+		ExecutionMode AsyncModeCache = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
 
-        Wait.wait(
-                async(Direct, 0, atomicIntegerIncrease, integer),
-                async(AsyncModeCache, 1, atomicIntegerIncrease, integer),
-                async(Direct, 0, atomicIntegerIncrease, integer));
+		Wait.wait(async(Direct, 0, atomicIntegerIncrease, integer),
+				async(AsyncModeCache, 1, atomicIntegerIncrease, integer),
+				async(Direct, 0, atomicIntegerIncrease, integer));
 
-        assertEquals(3, integer.get());
-    }
+		assertEquals(3, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldTestCacheBehaviorWithMultipleFrameVersions(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldTestCacheBehaviorWithMultipleFrameVersions(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
 
-        ExecutionMode VersionedCache = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
+		ExecutionMode VersionedCache = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.Versioned);
 
-        Wait.wait(
-                async(VersionedCache, 1, atomicIntegerIncrease, integer),
-                async(VersionedCache, 1, atomicIntegerIncrease, integer),
-                async(VersionedCache, 2, atomicIntegerIncrease, integer),
-                async(VersionedCache, 3, atomicIntegerIncrease, integer));
+		Wait.wait(async(VersionedCache, 1, atomicIntegerIncrease, integer),
+				async(VersionedCache, 1, atomicIntegerIncrease, integer),
+				async(VersionedCache, 2, atomicIntegerIncrease, integer),
+				async(VersionedCache, 3, atomicIntegerIncrease, integer));
 
-        assertEquals(3, integer.get());
-    }
+		assertEquals(3, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldRespectCacheEvictionAndInvalidateAppropriately(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldRespectCacheEvictionAndInvalidateAppropriately(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
 
-        ExecutionMode OneFrameCache = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
+		ExecutionMode OneFrameCache = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.OneFrame);
 
-        Wait.wait(
-                async(OneFrameCache, 0, atomicIntegerIncrease, integer),
-                async(OneFrameCache, 1, atomicIntegerIncrease, integer),
-                async(OneFrameCache, 2, atomicIntegerIncrease, integer));
+		Wait.wait(async(OneFrameCache, 0, atomicIntegerIncrease, integer),
+				async(OneFrameCache, 1, atomicIntegerIncrease, integer),
+				async(OneFrameCache, 2, atomicIntegerIncrease, integer));
 
-        assertEquals(1, integer.get());
-    }
+		assertEquals(1, integer.get());
+	}
 
-    @SuppressWarnings("DataFlowIssue")
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldHandleNullExecutionMode(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        Assertions.assertThrows(
-                NullPointerException.class, () -> Wait.wait(Async.async(null, 1, atomicIntegerIncrease, integer)));
-    }
+	@SuppressWarnings("DataFlowIssue")
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldHandleNullExecutionMode(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		Assertions.assertThrows(NullPointerException.class,
+				() -> Wait.wait(Async.async(null, 1, atomicIntegerIncrease, integer)));
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldHandleNullSupplier(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        Assertions.assertThrows(
-                NullPointerException.class,
-                () -> scheduler.executeTask(
-                        new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 1, 1, null));
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldHandleNullSupplier(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		Assertions.assertThrows(NullPointerException.class, () -> scheduler
+				.executeTask(new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 1, 1, null));
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldHandleNullCacheInExecutionMode(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, null);
-        Assertions.assertThrows(
-                NullPointerException.class,
-                () -> Wait.wait(Async.async(executionMode, 1, atomicIntegerIncrease, integer)));
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldHandleNullCacheInExecutionMode(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, null);
+		Assertions.assertThrows(NullPointerException.class,
+				() -> Wait.wait(Async.async(executionMode, 1, atomicIntegerIncrease, integer)));
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldHandleExceptionInTaskExecution(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldHandleExceptionInTaskExecution(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
-        Functions.F0<Boolean, AtomicInteger> faultyFunction = new Functions.F0<>("FaultyFunction") {
-            @Override
-            public Boolean run(AtomicInteger o) {
-                throw new RuntimeException("Simulated exception");
-            }
-        };
+		Functions.F0<Boolean, AtomicInteger> faultyFunction = new Functions.F0<>("FaultyFunction") {
+			@Override
+			public Boolean run(AtomicInteger o) {
+				throw new RuntimeException("Simulated exception");
+			}
+		};
 
-        Assertions.assertThrows(
-                RuntimeException.class,
-                () -> Wait.wait(Async.async(executionMode, 1, faultyFunction, new AtomicInteger(0))));
-    }
+		Assertions.assertThrows(RuntimeException.class,
+				() -> Wait.wait(Async.async(executionMode, 1, faultyFunction, new AtomicInteger(0))));
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldHandleNullTargetInExecutionMode(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
-        ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, null, Caches.No);
-        Assertions.assertThrows(
-                NullPointerException.class,
-                () -> Wait.wait(Async.async(executionMode, 1, atomicIntegerIncrease, integer)));
-    }
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldHandleNullTargetInExecutionMode(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
+		ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, null, Caches.No);
+		Assertions.assertThrows(NullPointerException.class,
+				() -> Wait.wait(Async.async(executionMode, 1, atomicIntegerIncrease, integer)));
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldThrowExceptionDuringTaskExecution(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldThrowExceptionDuringTaskExecution(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
-        Assertions.assertThrows(
-                RuntimeException.class,
-                () -> Wait.wait(Async.async(executionMode, 1, throwException, new AtomicInteger(0))));
-    }
+		Assertions.assertThrows(RuntimeException.class,
+				() -> Wait.wait(Async.async(executionMode, 1, throwException, new AtomicInteger(0))));
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldThrowCorrectExceptionWhenTaskFails(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldThrowCorrectExceptionWhenTaskFails(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
-        RuntimeException exception = Assertions.assertThrows(
-                RuntimeException.class,
-                () -> Wait.wait(Async.async(executionMode, 1, throwException, new AtomicInteger(0))));
+		RuntimeException exception = Assertions.assertThrows(RuntimeException.class,
+				() -> Wait.wait(Async.async(executionMode, 1, throwException, new AtomicInteger(0))));
 
-        assertEquals("Simulated exception", Exceptions.getRootCause(exception).getMessage());
-    }
+		assertEquals("Simulated exception", Exceptions.getRootCause(exception).getMessage());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldHandleNestedFunctions(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldHandleNestedFunctions(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
 
-        ExecutionMode directMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
-        ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+		ExecutionMode directMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
+		ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
-        Wait.wait(
-                Async.async(asyncMode, 0, Nested3, integer),
-                Async.async(directMode, 0, atomicIntegerIncrease, integer),
-                Async.async(directMode, 0, atomicIntegerDecrease, integer));
+		Wait.wait(Async.async(asyncMode, 0, Nested3, integer),
+				Async.async(directMode, 0, atomicIntegerIncrease, integer),
+				Async.async(directMode, 0, atomicIntegerDecrease, integer));
 
-        assertEquals(3, integer.get());
-    }
+		assertEquals(3, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldHandleDeeplyNestedOperations(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldHandleDeeplyNestedOperations(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
 
-        ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+		ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
-        Functions.F0<Boolean, AtomicInteger> deepNestedFunction = new Functions.F0<>("DeepNestedFunction") {
-            @Override
-            public Boolean run(AtomicInteger o) {
-                Wait.wait(
-                        async(asyncMode, 0, Nested3, o),
-                        async(asyncMode, 0, atomicIntegerIncrease, o),
-                        async(asyncMode, 0, atomicIntegerDecrease, o),
-                        async(asyncMode, 0, Nested2, o));
-                o.incrementAndGet();
-                return true;
-            }
-        };
+		Functions.F0<Boolean, AtomicInteger> deepNestedFunction = new Functions.F0<>("DeepNestedFunction") {
+			@Override
+			public Boolean run(AtomicInteger o) {
+				Wait.wait(async(asyncMode, 0, Nested3, o), async(asyncMode, 0, atomicIntegerIncrease, o),
+						async(asyncMode, 0, atomicIntegerDecrease, o), async(asyncMode, 0, Nested2, o));
+				o.incrementAndGet();
+				return true;
+			}
+		};
 
-        Wait.wait(
-                async(asyncMode, 0, deepNestedFunction, integer), async(asyncMode, 0, atomicIntegerIncrease, integer));
+		Wait.wait(async(asyncMode, 0, deepNestedFunction, integer),
+				async(asyncMode, 0, atomicIntegerIncrease, integer));
 
-        assertEquals(7, integer.get());
-    }
+		assertEquals(7, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldProperlyHandleInterleavedNestedOperations(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldProperlyHandleInterleavedNestedOperations(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
 
-        ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
-        ExecutionMode directMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
+		ExecutionMode asyncMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+		ExecutionMode directMode = new ExecutionMode(ExecutionMode.Mode.Direct, Target.Background, Caches.No);
 
-        Wait.wait(
-                async(asyncMode, 0, Nested3, integer),
-                async(directMode, 0, atomicIntegerIncrease, integer),
-                async(asyncMode, 0, Nested2, integer),
-                async(directMode, 0, atomicIntegerDecrease, integer),
-                async(asyncMode, 0, atomicIntegerIncrease, integer));
+		Wait.wait(async(asyncMode, 0, Nested3, integer), async(directMode, 0, atomicIntegerIncrease, integer),
+				async(asyncMode, 0, Nested2, integer), async(directMode, 0, atomicIntegerDecrease, integer),
+				async(asyncMode, 0, atomicIntegerIncrease, integer));
 
-        assertEquals(6, integer.get());
-    }
+		assertEquals(6, integer.get());
+	}
 
-    @ParameterizedTest
-    @MethodSource("schedulerProvider")
-    void shouldTestAsyncChainingWithOnCompletion(Scheduler scheduler) {
-        Async.scheduler(scheduler);
-        AtomicInteger integer = new AtomicInteger(0);
+	@ParameterizedTest
+	@MethodSource("schedulerProvider")
+	void shouldTestAsyncChainingWithOnCompletion(Scheduler scheduler) {
+		Async.scheduler(scheduler);
+		AtomicInteger integer = new AtomicInteger(0);
 
-        ExecutionMode firstMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
-        ExecutionMode secondMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+		ExecutionMode firstMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
+		ExecutionMode secondMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No);
 
-        //noinspection unused
-        Result<Boolean> result = Async.async(firstMode, 0, atomicIntegerIncrease, integer)
-                .onCompletion(v -> Async.async(secondMode, 0, atomicIntegerDecrease, integer)
-                        .onCompletion(w -> Async.async(firstMode, 0, atomicIntegerIncrease, integer)
-                                .onCompletion(x -> Async.async(secondMode, 0, Nested2, integer)
-                                        .onCompletion(y -> Async.async(firstMode, 0, Nested3, integer)))));
+		// noinspection unused
+		Result<Boolean> result = Async.async(firstMode, 0, atomicIntegerIncrease, integer)
+				.onCompletion(v -> Async.async(secondMode, 0, atomicIntegerDecrease, integer)
+						.onCompletion(w -> Async.async(firstMode, 0, atomicIntegerIncrease, integer)
+								.onCompletion(x -> Async.async(secondMode, 0, Nested2, integer)
+										.onCompletion(y -> Async.async(firstMode, 0, Nested3, integer)))));
 
-        Wait.wait(result);
+		Wait.wait(result);
 
-        assertEquals(6, integer.get());
-    }
+		assertEquals(6, integer.get());
+	}
 
-    private static final Functions.F0<Boolean, AtomicInteger> atomicIntegerIncrease =
-            new Functions.F0<>("AtomicIntegerIncrease") {
-                @Override
-                public Boolean run(AtomicInteger o) {
-                    o.incrementAndGet();
-                    return true;
-                }
-            };
+	private static final Functions.F0<Boolean, AtomicInteger> atomicIntegerIncrease = new Functions.F0<>(
+			"AtomicIntegerIncrease") {
+		@Override
+		public Boolean run(AtomicInteger o) {
+			o.incrementAndGet();
+			return true;
+		}
+	};
 
-    private static final Functions.F0<Boolean, AtomicInteger> atomicIntegerDecrease =
-            new Functions.F0<>("AtomicIntegerDecrease") {
-                @Override
-                public Boolean run(AtomicInteger o) {
-                    o.decrementAndGet();
-                    return true;
-                }
-            };
+	private static final Functions.F0<Boolean, AtomicInteger> atomicIntegerDecrease = new Functions.F0<>(
+			"AtomicIntegerDecrease") {
+		@Override
+		public Boolean run(AtomicInteger o) {
+			o.decrementAndGet();
+			return true;
+		}
+	};
 
-    private static final Functions.F0<Boolean, AtomicInteger> Nested2 = new Functions.F0<>("AtomicIntegerDecrease") {
-        @Override
-        public Boolean run(AtomicInteger o) {
-            o.incrementAndGet();
-            Wait.wait(async(
-                    new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No),
-                    0,
-                    atomicIntegerIncrease,
-                    o));
-            return true;
-        }
-    };
+	private static final Functions.F0<Boolean, AtomicInteger> Nested2 = new Functions.F0<>("AtomicIntegerDecrease") {
+		@Override
+		public Boolean run(AtomicInteger o) {
+			o.incrementAndGet();
+			Wait.wait(async(new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 0,
+					atomicIntegerIncrease, o));
+			return true;
+		}
+	};
 
-    private static final Functions.F0<Boolean, AtomicInteger> Nested3 = new Functions.F0<>("AtomicIntegerDecrease") {
-        @Override
-        public Boolean run(AtomicInteger o) {
-            Wait.wait(async(new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 0, Nested2, o));
-            o.incrementAndGet();
-            return true;
-        }
-    };
+	private static final Functions.F0<Boolean, AtomicInteger> Nested3 = new Functions.F0<>("AtomicIntegerDecrease") {
+		@Override
+		public Boolean run(AtomicInteger o) {
+			Wait.wait(async(new ExecutionMode(ExecutionMode.Mode.Async, Target.Background, Caches.No), 0, Nested2, o));
+			o.incrementAndGet();
+			return true;
+		}
+	};
 
-    private static final Functions.F0<Boolean, AtomicInteger> throwException = new Functions.F0<>("ThrowException") {
-        @Override
-        public Boolean run(AtomicInteger o) {
-            throw new RuntimeException("Simulated exception");
-        }
-    };
+	private static final Functions.F0<Boolean, AtomicInteger> throwException = new Functions.F0<>("ThrowException") {
+		@Override
+		public Boolean run(AtomicInteger o) {
+			throw new RuntimeException("Simulated exception");
+		}
+	};
 }

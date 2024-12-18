@@ -1,3 +1,4 @@
 package mylie.component;
 
-public interface Component {}
+public interface Component {
+}

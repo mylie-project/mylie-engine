@@ -8,53 +8,54 @@ import org.joml.Vector3dc;
 import org.joml.Vector3ic;
 
 public class Vector3f extends org.joml.Vector3f implements Vector3fc {
-    public Vector3f() {}
+	public Vector3f() {
+	}
 
-    public Vector3f(float d) {
-        super(d);
-    }
+	public Vector3f(float d) {
+		super(d);
+	}
 
-    public Vector3f(float x, float y, float z) {
-        super(x, y, z);
-    }
+	public Vector3f(float x, float y, float z) {
+		super(x, y, z);
+	}
 
-    public Vector3f(org.joml.Vector3fc v) {
-        super(v);
-    }
+	public Vector3f(org.joml.Vector3fc v) {
+		super(v);
+	}
 
-    public Vector3f(Vector3dc v) {
-        super(v);
-    }
+	public Vector3f(Vector3dc v) {
+		super(v);
+	}
 
-    public Vector3f(Vector3ic v) {
-        super(v);
-    }
+	public Vector3f(Vector3ic v) {
+		super(v);
+	}
 
-    public Vector3f(Vector2fc v, float z) {
-        super(v, z);
-    }
+	public Vector3f(Vector2fc v, float z) {
+		super(v, z);
+	}
 
-    public Vector3f(Vector2ic v, float z) {
-        super(v, z);
-    }
+	public Vector3f(Vector2ic v, float z) {
+		super(v, z);
+	}
 
-    public Vector3f(float[] xyz) {
-        super(xyz);
-    }
+	public Vector3f(float[] xyz) {
+		super(xyz);
+	}
 
-    public Vector3f(ByteBuffer buffer) {
-        super(buffer);
-    }
+	public Vector3f(ByteBuffer buffer) {
+		super(buffer);
+	}
 
-    public Vector3f(int index, ByteBuffer buffer) {
-        super(index, buffer);
-    }
+	public Vector3f(int index, ByteBuffer buffer) {
+		super(index, buffer);
+	}
 
-    public Vector3f(FloatBuffer buffer) {
-        super(buffer);
-    }
+	public Vector3f(FloatBuffer buffer) {
+		super(buffer);
+	}
 
-    public Vector3f(int index, FloatBuffer buffer) {
-        super(index, buffer);
-    }
+	public Vector3f(int index, FloatBuffer buffer) {
+		super(index, buffer);
+	}
 }

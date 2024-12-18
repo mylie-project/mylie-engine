@@ -6,15 +6,15 @@ import lombok.Getter;
 
 @Getter(AccessLevel.PACKAGE)
 public abstract class Result<T> {
-    private final int hash;
-    private final long version;
+	private final int hash;
+	private final long version;
 
-    public Result(int hash, long version) {
-        this.hash = hash;
-        this.version = version;
-    }
+	public Result(int hash, long version) {
+		this.hash = hash;
+		this.version = version;
+	}
 
-    public abstract T result();
+	public abstract T result();
 
-    public abstract <R> Result<R> onCompletion(Function<T, Result<R>> onCompletion);
+	public abstract <R> Result<R> onCompletion(Function<T, Result<R>> onCompletion);
 }

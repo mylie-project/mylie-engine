@@ -1,3 +1,4 @@
 package mylie.component;
 
-public interface AppComponent extends Component {}
+public interface AppComponent extends Component {
+}

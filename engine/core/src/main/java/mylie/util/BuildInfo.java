@@ -19,92 +19,88 @@ import org.slf4j.Logger;
 @Getter
 public final class BuildInfo {
 
-    final String engineVersion;
-    private final String lastTag;
-    private final String commitDistance;
-    private final String gitHash;
-    private final String gitHashFull;
-    private final String branchName;
-    private final String isCleanTag;
-    private final String buildTime;
+	final String engineVersion;
+	private final String lastTag;
+	private final String commitDistance;
+	private final String gitHash;
+	private final String gitHashFull;
+	private final String branchName;
+	private final String isCleanTag;
+	private final String buildTime;
 
-    /// Constructs an `EngineVersion` object by loading version information from a
-    /// properties file.
-    /// The properties file is expected to be at
-    /// `/com/github/mylie/engine/version.properties`
-    /// and should contain the following keys:
-    /// - `version`: The version of the engine.
-    /// - `lastTag`: The last Git tag.
-    /// - `commitDistance`: The distance from the last commit.
-    /// - `gitHash`: The abbreviated Git hash.
-    /// - `gitHashFull`: The full Git hash.
-    /// - `branchName`: The name of the Git branch.
-    /// - `isCleanTag`: Indicates if the tag is clean.
-    /// - `buildTime`: The time when the build was created.
-    ///
-    /// @throws IllegalStateException if the version properties file does not exist.
-    /// @throws RuntimeException if an I/O error occurs while reading the properties
-    /// file.
-    public BuildInfo() {
-        Properties properties = new Properties();
-        try (InputStream versionPropertiesStream = getClass().getResourceAsStream("/mylie/engine/version.properties")) {
-            if (versionPropertiesStream == null) {
-                throw new IllegalStateException("Version properties file does not exist");
-            }
-            properties.load(new InputStreamReader(versionPropertiesStream, StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+	/// Constructs an `EngineVersion` object by loading version information from a
+	/// properties file.
+	/// The properties file is expected to be at
+	/// `/com/github/mylie/engine/version.properties`
+	/// and should contain the following keys:
+	/// - `version`: The version of the engine.
+	/// - `lastTag`: The last Git tag.
+	/// - `commitDistance`: The distance from the last commit.
+	/// - `gitHash`: The abbreviated Git hash.
+	/// - `gitHashFull`: The full Git hash.
+	/// - `branchName`: The name of the Git branch.
+	/// - `isCleanTag`: Indicates if the tag is clean.
+	/// - `buildTime`: The time when the build was created.
+	///
+	/// @throws IllegalStateException if the version properties file does not exist.
+	/// @throws RuntimeException if an I/O error occurs while reading the properties
+	/// file.
+	public BuildInfo() {
+		Properties properties = new Properties();
+		try (InputStream versionPropertiesStream = getClass().getResourceAsStream("/mylie/engine/version.properties")) {
+			if (versionPropertiesStream == null) {
+				throw new IllegalStateException("Version properties file does not exist");
+			}
+			properties.load(new InputStreamReader(versionPropertiesStream, StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
-        this.engineVersion = properties.getProperty("version");
-        this.lastTag = properties.getProperty("lastTag");
-        this.commitDistance = properties.getProperty("commitDistance");
-        this.gitHash = properties.getProperty("gitHash");
-        this.gitHashFull = properties.getProperty("gitHashFull");
-        this.branchName = properties.getProperty("branchName");
-        this.isCleanTag = properties.getProperty("isCleanTag");
-        this.buildTime = properties.getProperty("buildTime");
-    }
+		this.engineVersion = properties.getProperty("version");
+		this.lastTag = properties.getProperty("lastTag");
+		this.commitDistance = properties.getProperty("commitDistance");
+		this.gitHash = properties.getProperty("gitHash");
+		this.gitHashFull = properties.getProperty("gitHashFull");
+		this.branchName = properties.getProperty("branchName");
+		this.isCleanTag = properties.getProperty("isCleanTag");
+		this.buildTime = properties.getProperty("buildTime");
+	}
 
-    @Override
-    public String toString() {
-        return "EngineVersion{" + "engineVersion='" + engineVersion + '\'' + ", lastTag='" + lastTag + '\''
-                + ", commitDistance='" + commitDistance + '\'' + ", gitHash='" + gitHash + '\'' + ", gitHashFull='"
-                + gitHashFull + '\'' + ", branchName='" + branchName + '\'' + ", isCleanTag='" + isCleanTag + '\''
-                + '}';
-    }
+	@Override
+	public String toString() {
+		return "EngineVersion{" + "engineVersion='" + engineVersion + '\'' + ", lastTag='" + lastTag + '\''
+				+ ", commitDistance='" + commitDistance + '\'' + ", gitHash='" + gitHash + '\'' + ", gitHashFull='"
+				+ gitHashFull + '\'' + ", branchName='" + branchName + '\'' + ", isCleanTag='" + isCleanTag + '\''
+				+ '}';
+	}
 
-    /// Logs the build information of the engine, including version, Git hash,
-    /// branch name, and
-    /// build time. The information is displayed in a stylized ASCII art format.
-    public void logBuildInfo(Logger logger) {
-        logger.error(".----------------.  .----------------.  .----------------.  .----------------. "
-                + " .----------------.");
-        logger.error("| .--------------. || .--------------. || .--------------. || .--------------. ||"
-                + " .--------------. |");
-        logger.error("| | ____    ____ | || |  ____  ____  | || |   _____      | || |     _____    | ||"
-                + " |  _________   | |");
-        logger.error("| ||_   \\  /   _|| || | |_  _||_  _| | || |  |_   _|     | || |    |_   _|   | ||"
-                + " | |_   ___  |  | |");
-        logger.error("| |  |   \\/   |  | || |   \\ \\  / /   | || |    | |       | || |      | |     |"
-                + " || |   | |_  \\_|  | |");
-        logger.error("| |  | |\\  /| |  | || |    \\ \\/ /    | || |    | |   _   | || |      | |     |"
-                + " || |   |  _|  _   | |");
-        logger.error("| | _| |_\\/_| |_ | || |    _|  |_    | || |   _| |__/ |  | || |     _| |_    | ||"
-                + " |  _| |___/ |  | |");
-        logger.error("| ||_____||_____|| || |   |______|   | || |  |________|  | || |    |_____|   | ||"
-                + " | |_________|  | |");
-        logger.error("| |              | || |              | || |              | || |              | ||"
-                + " |              | |");
-        logger.error("| '--------------' || '--------------' || '--------------' || '--------------' ||"
-                + " '--------------' |");
-        logger.error("'----------------'  '----------------'  '----------------'  '----------------' "
-                + " '----------------'");
-        logger.error(
-                "Engine Version: {}    Git Hash: {}    Git Branch: {}    BuildTime: {}",
-                engineVersion(),
-                gitHash(),
-                branchName(),
-                buildTime());
-    }
+	/// Logs the build information of the engine, including version, Git hash,
+	/// branch name, and
+	/// build time. The information is displayed in a stylized ASCII art format.
+	public void logBuildInfo(Logger logger) {
+		logger.error(".----------------.  .----------------.  .----------------.  .----------------. "
+				+ " .----------------.");
+		logger.error("| .--------------. || .--------------. || .--------------. || .--------------. ||"
+				+ " .--------------. |");
+		logger.error("| | ____    ____ | || |  ____  ____  | || |   _____      | || |     _____    | ||"
+				+ " |  _________   | |");
+		logger.error("| ||_   \\  /   _|| || | |_  _||_  _| | || |  |_   _|     | || |    |_   _|   | ||"
+				+ " | |_   ___  |  | |");
+		logger.error("| |  |   \\/   |  | || |   \\ \\  / /   | || |    | |       | || |      | |     |"
+				+ " || |   | |_  \\_|  | |");
+		logger.error("| |  | |\\  /| |  | || |    \\ \\/ /    | || |    | |   _   | || |      | |     |"
+				+ " || |   |  _|  _   | |");
+		logger.error("| | _| |_\\/_| |_ | || |    _|  |_    | || |   _| |__/ |  | || |     _| |_    | ||"
+				+ " |  _| |___/ |  | |");
+		logger.error("| ||_____||_____|| || |   |______|   | || |  |________|  | || |    |_____|   | ||"
+				+ " | |_________|  | |");
+		logger.error("| |              | || |              | || |              | || |              | ||"
+				+ " |              | |");
+		logger.error("| '--------------' || '--------------' || '--------------' || '--------------' ||"
+				+ " '--------------' |");
+		logger.error("'----------------'  '----------------'  '----------------'  '----------------' "
+				+ " '----------------'");
+		logger.error("Engine Version: {}    Git Hash: {}    Git Branch: {}    BuildTime: {}", engineVersion(),
+				gitHash(), branchName(), buildTime());
+	}
 }

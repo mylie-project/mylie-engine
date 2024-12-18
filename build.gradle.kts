@@ -33,8 +33,8 @@ subprojects{
                 java{
                     removeUnusedImports()
                     importOrder()
-
-                    palantirJavaFormat("2.50.0")
+                    eclipse()
+                    //palantirJavaFormat("2.50.0")
                     formatAnnotations()
                     trimTrailingWhitespace()
                     endWithNewline()
