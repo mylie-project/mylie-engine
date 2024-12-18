@@ -17,10 +17,13 @@ import org.lwjgl.system.MemoryUtil;
 @Getter(AccessLevel.PACKAGE)
 public class GlfwContext extends GraphicsContext {
     private static final ExecutionMode engine = new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No);
+
     @Setter(AccessLevel.PACKAGE)
     private long handle;
-    public GlfwContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext, Scheduler scheduler) {
-        super(configuration,primaryContext,scheduler);
+
+    public GlfwContext(
+            GraphicsContextConfiguration configuration, GraphicsContext primaryContext, Scheduler scheduler) {
+        super(configuration, primaryContext, scheduler);
     }
 
     @Override
@@ -30,11 +33,11 @@ public class GlfwContext extends GraphicsContext {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected  <T> void onOptionChanged(mylie.util.configuration.Option<GraphicsContext, T> option, T value) {
+    protected <T> void onOptionChanged(mylie.util.configuration.Option<GraphicsContext, T> option, T value) {
         ExecutionMode executionMode = option == Option.VSync ? executionMode() : engine;
         if (option instanceof GlfwOption<T>) {
             GlfwOption<Object> glfwOption = (GlfwOption<Object>) option;
-            Async.async(engine, -1, ApplySettings, handle, glfwOption, value);
+            Async.async(executionMode, -1, ApplySettings, handle, glfwOption, value);
         }
     }
 

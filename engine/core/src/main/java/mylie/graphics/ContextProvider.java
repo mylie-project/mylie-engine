@@ -7,5 +7,6 @@ public abstract class ContextProvider {
 
     public abstract Display display();
 
-    public abstract GraphicsContext createContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext);
+    public abstract GraphicsContext createContext(
+            GraphicsContextConfiguration configuration, GraphicsContext primaryContext);
 }

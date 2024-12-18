@@ -19,7 +19,6 @@ public abstract class Properties<TARGET, OPTION extends Property<TARGET, ?>> {
 
     protected abstract <T> Versioned.Reference<T> reference(Property<TARGET, T> option);
 
-
     public static class Map<TARGET, OPTION extends Property<TARGET, ?>> extends Properties<TARGET, OPTION> {
         private final java.util.Map<Property<TARGET, ?>, Versioned<?>> dataStore = new java.util.HashMap<>();
 

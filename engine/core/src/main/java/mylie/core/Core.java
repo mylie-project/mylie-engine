@@ -67,7 +67,7 @@ public class Core implements PropertiesAA<Engine, Engine.Property<?>> {
         Timer.Time time = null;
         while (shutdownReason == null) {
             frameId++;
-            log.debug("############ Frame<{}> ############",frameId);
+            log.debug("############ Frame<{}> ############", frameId);
             scheduler.version(frameId);
             time = timer.update(frameId);
             componentManager.update(time);

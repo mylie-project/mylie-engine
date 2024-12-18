@@ -83,10 +83,12 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
         log.trace("Creating window");
         GraphicsContextConfiguration configuration = contexts.configuration();
         GraphicsContext.VideoMode videoMode = configuration.option(GraphicsContext.Option.VideoMode);
-        Vector2i position=new Vector2i(0,0);
+        Vector2i position = new Vector2i(0, 0);
         Vector2ic size = new Vector2i(16, 16);
         long display = NULL;
-        long parent = contexts.primaryContext() == null ? NULL : contexts.primaryContext().handle();
+        long parent = contexts.primaryContext() == null
+                ? NULL
+                : contexts.primaryContext().handle();
         String title = configuration.option(GraphicsContext.Option.Title);
         boolean fullscreen = false;
         if (videoMode instanceof GraphicsContext.VideoMode.Windowed windowed) {
@@ -121,8 +123,7 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
         }
         if (videoMode instanceof GraphicsContext.VideoMode.Windowed windowed) {
             if (windowed.position() == GraphicsContext.VideoMode.Windowed.Centered || windowed.position() == null) {
-                GlfwDisplay tmpDisplay =
-                        (GlfwDisplay) (windowed.display() != null ? windowed.display() : display());
+                GlfwDisplay tmpDisplay = (GlfwDisplay) (windowed.display() != null ? windowed.display() : display());
                 Display.VideoMode tmpVideoMode = tmpDisplay.videoMode();
                 position = new Vector2i(
                         (tmpVideoMode.resolution().x() - size.x()) / 2,
@@ -134,9 +135,9 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
         }
         contexts.handle(window);
         setIconsWrapper(window, configuration.option(GraphicsContext.Option.Icons));
-        contexts.properties().property(GraphicsContext.Properties.Position,position);
-        contexts.properties().property(GraphicsContext.Properties.Size,size);
-        contexts.properties().property(GraphicsContext.Properties.FrameBufferSize,size);
+        contexts.properties().property(GraphicsContext.Properties.Position, position);
+        contexts.properties().property(GraphicsContext.Properties.Size, size);
+        contexts.properties().property(GraphicsContext.Properties.FrameBufferSize, size);
         GLFW.glfwShowWindow(window);
         return true;
     }

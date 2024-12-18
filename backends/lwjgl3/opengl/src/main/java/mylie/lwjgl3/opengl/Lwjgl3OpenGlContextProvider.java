@@ -13,21 +13,22 @@ import mylie.graphics.GraphicsContextConfiguration;
 import mylie.lwjgl3.glfw.GlfwContext;
 import mylie.lwjgl3.glfw.GlfwContextProvider;
 import org.lwjgl.glfw.GLFW;
+
 @Slf4j
 public class Lwjgl3OpenGlContextProvider extends GlfwContextProvider {
-    private final ExecutionMode executionMode=new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No);
+    private final ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No);
     private mylie.core.components.Scheduler scheduler;
 
     @Override
     public void onInitialize(ComponentManager componentManager) {
         super.onInitialize(componentManager);
-        scheduler=componentManager.getComponent(Scheduler.class);
+        scheduler = componentManager.getComponent(Scheduler.class);
     }
 
     @Override
     public GraphicsContext createContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext) {
-        Lwjgl3OpenGlContext lwjgl3OpenGlContext = new Lwjgl3OpenGlContext(configuration,primaryContext,scheduler);
-        Async.async(executionMode,-1,CreateContext,this,lwjgl3OpenGlContext).result();
+        Lwjgl3OpenGlContext lwjgl3OpenGlContext = new Lwjgl3OpenGlContext(configuration, primaryContext, scheduler);
+        Async.async(executionMode, -1, CreateContext, this, lwjgl3OpenGlContext).result();
         lwjgl3OpenGlContext.makeCurrent();
         lwjgl3OpenGlContext.createGlCapabilities();
         return lwjgl3OpenGlContext;

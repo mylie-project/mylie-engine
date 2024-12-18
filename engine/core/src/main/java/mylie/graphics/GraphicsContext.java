@@ -1,5 +1,7 @@
 package mylie.graphics;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import lombok.AccessLevel;
 import lombok.Getter;
 import mylie.async.*;
@@ -10,32 +12,38 @@ import mylie.util.configuration.Configurable;
 import mylie.util.properties.PropertiesAA;
 import mylie.util.properties.Property;
 import mylie.util.versioned.AutoIncremented;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 @Getter(AccessLevel.PACKAGE)
 public abstract class GraphicsContext
         implements Configurable<GraphicsContext, GraphicsContext.Option<?>>,
                 PropertiesAA<GraphicsContext, GraphicsContext.Properties<?>> {
-    private static int contextCount=-1;
+    private static int contextCount = -1;
+
     @Getter(AccessLevel.PUBLIC)
     private final mylie.util.properties.Properties<GraphicsContext, GraphicsContext.Properties<?>> properties =
             new mylie.util.properties.Properties.Map<>(AutoIncremented::new);
+
     @Getter(AccessLevel.PUBLIC)
     private final GraphicsContextConfiguration configuration;
+
     @Getter(AccessLevel.PROTECTED)
     private final ExecutionMode executionMode;
+
     @Getter(AccessLevel.PROTECTED)
     private final GraphicsContext primaryContext;
+
     private final ManagedThread contextThread;
-    private final BlockingQueue<Runnable> tasks=new LinkedBlockingQueue<>();
-    private final Target target=new Target("GraphicsContext<"+ ++contextCount +">");
-    public GraphicsContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext, Scheduler scheduler) {
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private final Target target = new Target("GraphicsContext<" + ++contextCount + ">");
+
+    public GraphicsContext(
+            GraphicsContextConfiguration configuration, GraphicsContext primaryContext, Scheduler scheduler) {
         this.configuration = configuration;
+        this.configuration.context(this);
         this.primaryContext = primaryContext;
-        scheduler.registerTarget(target,tasks::add);
-        this.contextThread=scheduler.createThread(target,tasks);
-        executionMode=new ExecutionMode(ExecutionMode.Mode.Async,target, Caches.No);
+        scheduler.registerTarget(target, tasks::add);
+        this.contextThread = scheduler.createThread(target, tasks);
+        executionMode = new ExecutionMode(ExecutionMode.Mode.Async, target, Caches.No);
     }
 
     protected abstract <T> void onOptionChanged(mylie.util.configuration.Option<GraphicsContext, T> option, T value);

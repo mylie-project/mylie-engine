@@ -1,5 +1,8 @@
 package mylie.lwjgl3.opengl;
 
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_OUTPUT;
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_HIGH;
+
 import lombok.extern.slf4j.Slf4j;
 import mylie.async.Async;
 import mylie.async.Functions;
@@ -9,13 +12,13 @@ import mylie.graphics.GraphicsContextConfiguration;
 import mylie.lwjgl3.glfw.GlfwContext;
 import org.lwjgl.opengl.*;
 
-import static org.lwjgl.opengl.GL43C.GL_DEBUG_OUTPUT;
-import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_HIGH;
 @Slf4j
 public class Lwjgl3OpenGlContext extends GlfwContext implements GLDebugMessageCallbackI {
     GLCapabilities glCapabilities;
-    public Lwjgl3OpenGlContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext, Scheduler scheduler) {
-        super(configuration,primaryContext,scheduler);
+
+    public Lwjgl3OpenGlContext(
+            GraphicsContextConfiguration configuration, GraphicsContext primaryContext, Scheduler scheduler) {
+        super(configuration, primaryContext, scheduler);
     }
 
     public void createGlCapabilities() {

@@ -1,5 +1,8 @@
 package mylie.graphics;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,20 +12,17 @@ import mylie.component.BaseCoreComponent;
 import mylie.component.Lifecycle;
 import mylie.core.Engine;
 import mylie.core.Timer;
-import mylie.core.components.Scheduler;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
 @Getter(AccessLevel.PACKAGE)
-public class GraphicsModule extends BaseCoreComponent implements Lifecycle.AddRemove, Lifecycle.Update,Lifecycle.InitDestroy {
+public class GraphicsModule extends BaseCoreComponent
+        implements Lifecycle.AddRemove, Lifecycle.Update, Lifecycle.InitDestroy {
     private Api api;
     private GraphicsContext primaryContext;
-    private final List<GraphicsContext> activeContexts=new CopyOnWriteArrayList<>();
-    private final List<GraphicsContext> syncedContexts=new CopyOnWriteArrayList<>();;
-    private final List<Result<Async.Void>> swapBufferQueue=new LinkedList<>();
+    private final List<GraphicsContext> activeContexts = new CopyOnWriteArrayList<>();
+    private final List<GraphicsContext> syncedContexts = new CopyOnWriteArrayList<>();
+    ;
+    private final List<Result<Async.Void>> swapBufferQueue = new LinkedList<>();
 
     @Override
     public void onAdd() {
@@ -32,12 +32,12 @@ public class GraphicsModule extends BaseCoreComponent implements Lifecycle.AddRe
     }
 
     public GraphicsContext createContext(GraphicsContextConfiguration configuration, boolean synced) {
-        GraphicsContext graphicsContext=api.contextProvider().createContext(configuration,primaryContext);
-        if(primaryContext==null){
-            primaryContext=graphicsContext;
+        GraphicsContext graphicsContext = api.contextProvider().createContext(configuration, primaryContext);
+        if (primaryContext == null) {
+            primaryContext = graphicsContext;
         }
         activeContexts.add(graphicsContext);
-        if(synced){
+        if (synced) {
             syncedContexts.add(graphicsContext);
         }
         graphicsContext.contextThread().start();
@@ -63,11 +63,8 @@ public class GraphicsModule extends BaseCoreComponent implements Lifecycle.AddRe
         return "GraphicsModule";
     }
 
-
     @Override
-    public void onInit() {
-
-    }
+    public void onInit() {}
 
     @Override
     public void onDestroy() {

@@ -1,11 +1,10 @@
 package mylie.application;
 
+import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Setter;
 import mylie.component.AppComponent;
 import mylie.component.ComponentManager;
-
-import java.util.function.Consumer;
 
 public abstract class BaseApplication implements Application {
     @Setter(AccessLevel.PACKAGE)

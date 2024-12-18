@@ -19,6 +19,6 @@ public class GraphicsManager implements AppComponent {
     }
 
     public GraphicsContext createContext(GraphicsContextConfiguration configuration, boolean synced) {
-        return graphicsModule.createContext(configuration,synced);
+        return graphicsModule.createContext(configuration, synced);
     }
 }
