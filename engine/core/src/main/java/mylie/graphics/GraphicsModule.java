@@ -57,7 +57,7 @@ public class GraphicsModule extends BaseCoreComponent
 		while (!swapBufferQueue.isEmpty()) {
 			swapBufferQueue.removeFirst().result();
 		}
-		for (GraphicsContext activeContext : activeContexts) {
+		for (GraphicsContext activeContext : syncedContexts) {
 			swapBufferQueue.add(activeContext.swapBuffers());
 		}
 	}

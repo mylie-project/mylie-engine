@@ -37,7 +37,7 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		gcc.option(GraphicsContext.Option.AlwaysOnTop, true);
 		gcc.option(GraphicsContext.Option.Title, "Hello Engine");
 		gcc.option(GraphicsContext.Option.VideoMode, windowed);
-		gcc.option(GraphicsContext.Option.VSync, true);
+		gcc.option(GraphicsContext.Option.VSync, false);
 		gcc.option(GraphicsContext.Option.Icons, IconFactory.getDefaultIcons());
 		gcc.option(GraphicsContext.Option.Cursor, GraphicsContext.Option.CursorMode.Normal);
 		context = component(GraphicsManager.class).createContext(gcc, true);
@@ -64,6 +64,6 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 
 	@Override
 	public void onEvent(InputEvent event) {
-		log.info("Input event: {}", event);
+		//log.info("Input event: {}", event);
 	}
 }

@@ -22,7 +22,7 @@ dependencyResolutionManagement{
             version("logback","1.5.12")
             version("slf4j","2.0.16")
             version("joml","1.10.7")
-            version("lwjgl3","3.3.4")
+            version("lwjgl3","3.3.5")
             version("imgui","1.87.6")
 
             library("lombok","org.projectlombok","lombok").versionRef("lombok")
