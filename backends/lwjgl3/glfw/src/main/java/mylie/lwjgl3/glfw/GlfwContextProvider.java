@@ -7,6 +7,8 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import mylie.component.ComponentManager;
@@ -53,7 +55,7 @@ public abstract class GlfwContextProvider extends ContextProvider implements GLF
 
 		displays.addAll(GlfwUtil.getDisplays());
 		display = GlfwUtil.getDisplay(GLFW.glfwGetPrimaryMonitor());
-		componentManager.getComponent(InputManager.class).addInputProvider(inputProvider);
+		Objects.requireNonNull(componentManager.getComponent(InputManager.class)).addInputProvider(inputProvider);
 	}
 
 	protected void setupContext(GlfwContext context) {

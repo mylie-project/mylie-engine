@@ -23,7 +23,7 @@ public class Async {
 			O object) {
 		int hashCode = hash(function, object);
 		Result<R> result = executionMode.cache().get(hashCode, version);
-		log.trace("Function<{}>({}) Hash={} Cache={}", function.name(), object, hashCode, result != null);
+		log.trace("Function0<{}>({}) Hash={} Cache={}", function.name(), object, hashCode, result != null);
 		if (result == null) {
 			result = executeTask(executionMode, hashCode, version, () -> function.run(object));
 		}
@@ -35,7 +35,7 @@ public class Async {
 		int hashCode = hash(function, object);
 		Result<R> result = executionMode.cache().get(hashCode, version);
 
-		log.trace("Function<{}>({}) Hash={} Cache={}", function.name(), object, hashCode, result != null);
+		log.trace("Function1<{}>({}) Hash={} Cache={}", function.name(), object, hashCode, result != null);
 		if (result == null) {
 			result = executeTask(executionMode, hashCode, version, () -> function.run(object, param0));
 		}
@@ -46,7 +46,7 @@ public class Async {
 			Functions.F2<R, O, P0, P1> function, O object, P0 param0, P1 param1) {
 		int hashCode = hash(function, object);
 		Result<R> result = executionMode.cache().get(hashCode, version);
-		log.trace("Function<{}>({}) Hash={} Cache={}", function.name(), object, hashCode, result != null);
+		log.trace("Function2<{}>({}) Hash={} Cache={}", function.name(), object, hashCode, result != null);
 		if (result == null) {
 			result = executeTask(executionMode, hashCode, version, () -> function.run(object, param0, param1));
 		}
