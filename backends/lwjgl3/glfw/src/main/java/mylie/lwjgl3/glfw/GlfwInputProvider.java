@@ -110,9 +110,8 @@ public class GlfwInputProvider implements InputProvider {
 		}
 		if (eventList != null) {
 			switch (window.option(GraphicsContext.Option.Cursor)) {
-				case Normal, Hidden -> {
+				case Normal, Hidden ->
 					eventList.add(new Mouse.PositionEvent(window, defaultMouse, new Vector2i((int) xpos, (int) ypos)));
-				}
 			}
 			eventList.add(new Mouse.MotionEvent(window, defaultMouse, lastPosition.sub(position, new Vector2i())));
 			eventList.add(new Mouse.AxisEvent(window, defaultMouse, Mouse.MouseAxis.X, (int) xpos - lastPosition.x()));

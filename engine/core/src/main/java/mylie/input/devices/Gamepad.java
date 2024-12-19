@@ -77,7 +77,7 @@ public class Gamepad extends InputDevice {
 		public ButtonEvent(GraphicsContext context, Gamepad device, Button button, boolean pressed) {
 			super(context, device, pressed);
 			this.button = button;
-			device.keyState.computeIfAbsent(button, key -> new AutoIncremented<>(pressed)).value(pressed);
+			device.keyState.computeIfAbsent(button, _ -> new AutoIncremented<>(pressed)).value(pressed);
 		}
 		@Override
 		public String toString() {
@@ -92,7 +92,7 @@ public class Gamepad extends InputDevice {
 		public AxisEvent(GraphicsContext context, Gamepad device, Axis axis, float value) {
 			super(context, device, value);
 			this.axis = axis;
-			device.axisState.computeIfAbsent(axis, key -> new AutoIncremented<>(value)).value(value);
+			device.axisState.computeIfAbsent(axis, _ -> new AutoIncremented<>(value)).value(value);
 		}
 
 		@Override
