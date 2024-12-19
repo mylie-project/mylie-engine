@@ -213,18 +213,20 @@ public class GlfwInputProvider implements InputProvider {
 
 		void update(List<InputEvent<?>> gamepadEvents) {
 			try (MemoryStack stack = MemoryStack.stackPush()) {
-				GLFWGamepadState state = GLFWGamepadState.mallocStack(stack);
+				GLFWGamepadState state = GLFWGamepadState.malloc(stack);
 				if (GLFW.glfwGetGamepadState(id(), state)) {
 
 					if (!connected()) {
-						String s = GLFW.glfwGetGamepadName(id());
-						name(s);
+						String gamepadName = GLFW.glfwGetGamepadName(id());
+						name(gamepadName);
+						log.trace("Gamepad {} connected: {}", id(), gamepadName);
 						gamepadEvents.add(new Gamepad.ConnectedEvent(null, this, true));
 					}
 					for (int i = 0; i < GLFW.GLFW_GAMEPAD_BUTTON_LAST; i++) {
 						Button button = GlfwConvert.convertGampadButton(i);
 						boolean buttonState = state.buttons(i) == GLFW.GLFW_PRESS;
 						if (button(button) != buttonState) {
+							log.trace("Gamepad {} button {} state changed: {}", id(), button, buttonState);
 							gamepadEvents.add(new Gamepad.ButtonEvent(null, this, button, buttonState));
 						}
 					}
@@ -232,12 +234,14 @@ public class GlfwInputProvider implements InputProvider {
 						Axis axis = GlfwConvert.convertGampadAxis(i);
 						float axisValue = state.axes(i);
 						if (axis(axis) != axisValue) {
+							log.trace("Gamepad {} axis {} value changed: {}", id(), axis, axisValue);
 							gamepadEvents.add(new Gamepad.AxisEvent(null, this, axis, axisValue));
 						}
 					}
 				} else {
-					// log.trace("Gamepad {} disconnected",index);
+
 					if (connected()) {
+						log.trace("Gamepad {} disconnected", id());
 						gamepadEvents.add(new ConnectedEvent(null, this, false));
 					}
 				}
