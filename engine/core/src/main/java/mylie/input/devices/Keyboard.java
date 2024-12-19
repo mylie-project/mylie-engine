@@ -1,43 +1,36 @@
 package mylie.input.devices;
 
+import java.util.Map;
 import lombok.Getter;
 import lombok.ToString;
 import mylie.graphics.GraphicsContext;
-import mylie.input.InputEvent;
 import mylie.util.versioned.AutoIncremented;
 import mylie.util.versioned.Versioned;
 
-import java.util.Map;
-
 public class Keyboard extends InputDevice {
-	private final Map<Key, Versioned<Boolean>> keyState=new java.util.HashMap<>();
+	private final Map<Key, Versioned<Boolean>> keyState = new java.util.HashMap<>();
 	void update(Key key, boolean pressed) {
-		keyState.computeIfAbsent(key,_->new AutoIncremented<>(false)).value(pressed);
+		keyState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).value(pressed);
 	}
 
 	public boolean pressed(Key key) {
-		return keyState.computeIfAbsent(key,_->new AutoIncremented<>(false)).value();
+		return keyState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).value();
 	}
 
 	public Versioned.Reference<Boolean> referenced(Key key) {
-		return keyState.computeIfAbsent(key,_->new AutoIncremented<>(false)).reference();
+		return keyState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).reference();
 	}
-
-
 
 	@ToString
 	@Getter
-	public static class KeyEvent extends InputEvent implements EventType.DigitalEvent {
-		final Keyboard keyboard;
+	public static class KeyEvent extends DeviceEvent<Keyboard, Boolean> {
 		final Key key;
-		final boolean pressed;
-
-		public KeyEvent(GraphicsContext context, Keyboard keyboard, Key key, boolean pressed) {
-			super(context);
-			this.keyboard = keyboard;
+		final int modifiers;
+		public KeyEvent(GraphicsContext context, Keyboard keyboard, Key key, boolean pressed, int modifiers) {
+			super(context, keyboard, pressed);
 			this.key = key;
-			this.pressed = pressed;
 			keyboard.update(key, pressed);
+			this.modifiers = modifiers;
 		}
 	}
 
@@ -150,5 +143,9 @@ public class Keyboard extends InputDevice {
 		public static final Key RIGHT_SUPER = new Key("RIGHT_SUPER");
 
 		public static final Key UNKNOWN = new Key("UNKNOWN");
+	}
+
+	public enum Modifier {
+		SHIFT, CONTROL, ALT, SUPER, CAPS_LOCK, NUM_LOCK,
 	}
 }

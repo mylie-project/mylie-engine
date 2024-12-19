@@ -6,6 +6,7 @@ import mylie.graphics.GraphicsContext;
 
 @AllArgsConstructor
 @Getter
-public abstract class InputEvent {
+public abstract class InputEvent<T> {
 	final GraphicsContext context;
+	final T value;
 }

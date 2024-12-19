@@ -10,6 +10,7 @@ import mylie.graphics.GraphicsManager;
 import mylie.input.InputEvent;
 import mylie.input.InputManager;
 import mylie.input.RawInputListener;
+import mylie.input.devices.Gamepad;
 import mylie.input.devices.Keyboard;
 import mylie.lwjgl3.opengl.Lwjgl3OpenGlSettings;
 import mylie.platform.desktop.Desktop;
@@ -27,6 +28,8 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		EngineConfiguration configuration = Platform.initialize(new Desktop());
 		configuration.option(Engine.Options.Application, new HelloEngine());
 		configuration.option(Engine.Options.GraphicsApi, new Lwjgl3OpenGlSettings());
+		// configuration.option(Engine.Options.Scheduler,
+		// SchedulerSettings.SingleThreaded);
 		Engine.ShutdownReason shutdownReason = Engine.start(configuration);
 	}
 
@@ -48,13 +51,9 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 	@Override
 	public void onUpdate(Timer.Time time) {
 		log.trace("HelloEngine updated.");
-		if(escapeKey.value()){
+		if (escapeKey.value()) {
 			component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("Escape pressed"));
 		}
-		// if (time.version() == 10) {
-		// component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("All
-		// done"));
-		// }
 	}
 
 	@Override
@@ -63,7 +62,10 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 	}
 
 	@Override
-	public void onEvent(InputEvent event) {
-		//log.info("Input event: {}", event);
+	public void onEvent(InputEvent<?> event) {
+		if (event instanceof Gamepad.GamepadEvent<?> gamepadEvent) {
+			log.info("Gamepad event: {}", gamepadEvent);
+		}
+		// log.info("Input event: {}", event);
 	}
 }

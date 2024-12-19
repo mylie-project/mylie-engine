@@ -10,50 +10,81 @@ import mylie.graphics.GraphicsContext;
 import mylie.input.InputEvent;
 import mylie.input.InputManager;
 import mylie.input.InputProvider;
+import mylie.input.devices.Gamepad;
 import mylie.input.devices.Keyboard;
 import mylie.input.devices.Mouse;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWGamepadState;
+import org.lwjgl.system.MemoryStack;
 
 @Slf4j
 public class GlfwInputProvider implements InputProvider {
 	private final ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target,
 			Caches.OneFrame);
+	private static final List<GlfwGamepad> gamepads = new LinkedList<>();
 	private final Keyboard defaultKeyboard;
 	private final Mouse defaultMouse;
 
 	@Setter
-	private List<InputEvent> eventList = null;
+	private List<InputEvent<?>> eventList = null;
 
 	public GlfwInputProvider(InputManager inputManager) {
 		defaultKeyboard = inputManager.keyboard();
 		defaultMouse = inputManager.mouse();
+		for (int i = 0; i < 4; i++) {
+			gamepads.add(new GlfwGamepad(i));
+		}
 	}
 
 	@Override
-	public Result<List<InputEvent>> inputEvents() {
+	public Result<List<InputEvent<?>>> inputEvents() {
 		return Async.async(executionMode, -1, PollEvents, this);
 	}
 
-	private static final Functions.F0<List<InputEvent>, GlfwInputProvider> PollEvents = new Functions.F0<>(
+	private static final Functions.F0<List<InputEvent<?>>, GlfwInputProvider> PollEvents = new Functions.F0<>(
 			"PollEvents") {
 		@Override
-		protected List<InputEvent> run(GlfwInputProvider inputProvider) {
-			List<InputEvent> inputEvents = new LinkedList<>();
+		protected List<InputEvent<?>> run(GlfwInputProvider inputProvider) {
+			List<InputEvent<?>> inputEvents = new LinkedList<>();
 			inputProvider.eventList(inputEvents);
 			GLFW.glfwPollEvents();
 			inputProvider.eventList(null);
+			processGamepadEvents(inputEvents);
 			return inputEvents;
 		}
 	};
+
+	private static int getModifiers(int mods) {
+		int modifiers = 0;
+		if ((mods & GLFW.GLFW_MOD_SHIFT) != 0) {
+			modifiers |= 1 << Keyboard.Modifier.SHIFT.ordinal();
+		}
+		if ((mods & GLFW.GLFW_MOD_CONTROL) != 0) {
+			modifiers |= 1 << Keyboard.Modifier.CONTROL.ordinal();
+		}
+		if ((mods & GLFW.GLFW_MOD_ALT) != 0) {
+			modifiers |= 1 << Keyboard.Modifier.ALT.ordinal();
+		}
+		if ((mods & GLFW.GLFW_MOD_SUPER) != 0) {
+			modifiers |= 1 << Keyboard.Modifier.SUPER.ordinal();
+		}
+		if ((mods & GLFW.GLFW_MOD_CAPS_LOCK) != 0) {
+			modifiers |= 1 << Keyboard.Modifier.CAPS_LOCK.ordinal();
+		}
+		if ((mods & GLFW.GLFW_MOD_NUM_LOCK) != 0) {
+			modifiers |= 1 << Keyboard.Modifier.NUM_LOCK.ordinal();
+		}
+		return modifiers;
+	}
 
 	public void keyCallback(GlfwContext window, int keycode, int scancode, int action, int mods) {
 		log.trace("Key Callback: window={}, keycode={}, scancode={}, action={}, mods={}", window, keycode, scancode,
 				action, mods);
 		if (eventList != null) {
 			eventList.add(new Keyboard.KeyEvent(window, defaultKeyboard, GlfwConvert.convertKey(scancode, keycode),
-					action == GLFW.GLFW_PRESS));
+					action == GLFW.GLFW_PRESS, getModifiers(mods)));
 		}
 	}
 
@@ -61,7 +92,7 @@ public class GlfwInputProvider implements InputProvider {
 		log.trace("Mouse Button Callback: window={}, button={}, action={}, mods={}", window, button, action, mods);
 		if (eventList != null) {
 			eventList.add(new Mouse.ButtonEvent(window, defaultMouse, GlfwConvert.convertMouseButton(button),
-					action == GLFW.GLFW_PRESS));
+					action == GLFW.GLFW_PRESS, getModifiers(mods)));
 		}
 	}
 
@@ -74,7 +105,7 @@ public class GlfwInputProvider implements InputProvider {
 	public void cursorPosCallback(GlfwContext window, double xpos, double ypos) {
 		log.trace("Cursor Pos Callback: window={}, xpos={}, ypos={}", window, xpos, ypos);
 		Vector2ic position = new Vector2i((int) xpos, (int) ypos);
-		if(lastPosition == null) {
+		if (lastPosition == null) {
 			lastPosition = position;
 		}
 		if (eventList != null) {
@@ -84,8 +115,8 @@ public class GlfwInputProvider implements InputProvider {
 				}
 			}
 			eventList.add(new Mouse.MotionEvent(window, defaultMouse, lastPosition.sub(position, new Vector2i())));
-			eventList.add(new Mouse.AxisEvent(window,defaultMouse, Mouse.MouseAxis.X, (int) xpos - lastPosition.x()));
-			eventList.add(new Mouse.AxisEvent(window,defaultMouse, Mouse.MouseAxis.Y, (int) ypos - lastPosition.y()));
+			eventList.add(new Mouse.AxisEvent(window, defaultMouse, Mouse.MouseAxis.X, (int) xpos - lastPosition.x()));
+			eventList.add(new Mouse.AxisEvent(window, defaultMouse, Mouse.MouseAxis.Y, (int) ypos - lastPosition.y()));
 		}
 		lastPosition = position;
 		// eventList.add(
@@ -95,12 +126,12 @@ public class GlfwInputProvider implements InputProvider {
 
 	public void cursorEnterCallback(GlfwContext window, boolean entered) {
 		log.trace("Cursor Enter Callback: window={}, entered={}", window, entered);
-		//todo
+		// todo
 	}
 
 	public void scrollCallback(GlfwContext window, double xoffset, double yoffset) {
 		log.trace("Scroll Callback: window={}, xoffset={}, yoffset={}", window, xoffset, yoffset);
-		eventList.add(new Mouse.AxisEvent(window,defaultMouse, Mouse.MouseAxis.WHEEL, (int) yoffset));
+		eventList.add(new Mouse.AxisEvent(window, defaultMouse, Mouse.MouseAxis.WHEEL, (int) yoffset));
 		/*
 		 * InputEvent.Mouse.Wheel.WheelAxis axis = yoffset != 0 ?
 		 * InputEvent.Mouse.Wheel.WheelAxis.Y : InputEvent.Mouse.Wheel.WheelAxis.X;
@@ -167,5 +198,50 @@ public class GlfwInputProvider implements InputProvider {
 		 * ContextProperties.Position.set(context, position, timer.time().frameId());
 		 * eventList.add(new InputEvent.Window.Position(context, position));
 		 */
+	}
+
+	private static void processGamepadEvents(List<InputEvent<?>> gamepadEvents) {
+		for (GlfwGamepad gamepad : gamepads) {
+			gamepad.update(gamepadEvents);
+		}
+	}
+
+	private static class GlfwGamepad extends Gamepad {
+		public GlfwGamepad(int index) {
+			super(index, GlfwInputProvider.class);
+		}
+
+		void update(List<InputEvent<?>> gamepadEvents) {
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				GLFWGamepadState state = GLFWGamepadState.mallocStack(stack);
+				if (GLFW.glfwGetGamepadState(id(), state)) {
+
+					if (!connected()) {
+						String s = GLFW.glfwGetGamepadName(id());
+						name(s);
+						gamepadEvents.add(new Gamepad.ConnectedEvent(null, this, true));
+					}
+					for (int i = 0; i < GLFW.GLFW_GAMEPAD_BUTTON_LAST; i++) {
+						Button button = GlfwConvert.convertGampadButton(i);
+						boolean buttonState = state.buttons(i) == GLFW.GLFW_PRESS;
+						if (button(button) != buttonState) {
+							gamepadEvents.add(new Gamepad.ButtonEvent(null, this, button, buttonState));
+						}
+					}
+					for (int i = 0; i < GLFW.GLFW_GAMEPAD_AXIS_LAST; i++) {
+						Axis axis = GlfwConvert.convertGampadAxis(i);
+						float axisValue = state.axes(i);
+						if (axis(axis) != axisValue) {
+							gamepadEvents.add(new Gamepad.AxisEvent(null, this, axis, axisValue));
+						}
+					}
+				} else {
+					// log.trace("Gamepad {} disconnected",index);
+					if (connected()) {
+						gamepadEvents.add(new ConnectedEvent(null, this, false));
+					}
+				}
+			}
+		}
 	}
 }

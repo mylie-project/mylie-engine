@@ -2,6 +2,7 @@ package mylie.lwjgl3.glfw;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import mylie.input.devices.Gamepad;
 import mylie.input.devices.Keyboard;
 import mylie.input.devices.Mouse;
 
@@ -137,5 +138,59 @@ public class GlfwConvert {
 			};
 		}
 		return engineKey;
+	}
+
+	public static Gamepad.Button convertGampadButton(int i) {
+		switch (i) {
+			case GLFW_GAMEPAD_BUTTON_A :
+				return Gamepad.Button.A;
+			case GLFW_GAMEPAD_BUTTON_B :
+				return Gamepad.Button.B;
+			case GLFW_GAMEPAD_BUTTON_X :
+				return Gamepad.Button.X;
+			case GLFW_GAMEPAD_BUTTON_Y :
+				return Gamepad.Button.Y;
+			case GLFW_GAMEPAD_BUTTON_LEFT_BUMPER :
+				return Gamepad.Button.LEFT_BUMPER;
+			case GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER :
+				return Gamepad.Button.RIGHT_BUMPER;
+			case GLFW_GAMEPAD_BUTTON_DPAD_DOWN :
+				return Gamepad.Button.DPAD_DOWN;
+			case GLFW_GAMEPAD_BUTTON_DPAD_LEFT :
+				return Gamepad.Button.DPAD_LEFT;
+			case GLFW_GAMEPAD_BUTTON_DPAD_RIGHT :
+				return Gamepad.Button.DPAD_RIGHT;
+			case GLFW_GAMEPAD_BUTTON_DPAD_UP :
+				return Gamepad.Button.DPAD_UP;
+			case GLFW_GAMEPAD_BUTTON_START :
+				return Gamepad.Button.START;
+			case GLFW_GAMEPAD_BUTTON_BACK :
+				return Gamepad.Button.SELECT;
+			case GLFW_GAMEPAD_BUTTON_LEFT_THUMB :
+				return Gamepad.Button.LEFT_THUMP;
+			case GLFW_GAMEPAD_BUTTON_RIGHT_THUMB :
+				return Gamepad.Button.RIGHT_THUMP;
+			default :
+				return new Gamepad.Button("UNKNOWN" + i);
+		}
+	}
+
+	public static Gamepad.Axis convertGampadAxis(int i) {
+		switch (i) {
+			case GLFW_GAMEPAD_AXIS_LEFT_X :
+				return Gamepad.Axis.LEFT_STICK_X;
+			case GLFW_GAMEPAD_AXIS_LEFT_Y :
+				return Gamepad.Axis.LEFT_STICK_Y;
+			case GLFW_GAMEPAD_AXIS_RIGHT_X :
+				return Gamepad.Axis.RIGHT_STICK_X;
+			case GLFW_GAMEPAD_AXIS_RIGHT_Y :
+				return Gamepad.Axis.RIGHT_STICK_Y;
+			case GLFW_GAMEPAD_AXIS_LEFT_TRIGGER :
+				return Gamepad.Axis.LEFT_TRIGGER;
+			case GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER :
+				return Gamepad.Axis.RIGHT_TRIGGER;
+			default :
+				return new Gamepad.Axis("UNKNOWN" + i);
+		}
 	}
 }
