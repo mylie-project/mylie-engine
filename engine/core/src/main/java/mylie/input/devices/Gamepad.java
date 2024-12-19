@@ -55,7 +55,6 @@ public class Gamepad extends InputDevice {
 		}
 	}
 
-	@ToString
 	@Getter
 	public static class ConnectedEvent extends GamepadEvent<Boolean> {
 
@@ -69,7 +68,6 @@ public class Gamepad extends InputDevice {
 		}
 	}
 
-	@ToString
 	@Getter
 	public static class ButtonEvent extends GamepadEvent<Boolean> {
 		final Button button;
