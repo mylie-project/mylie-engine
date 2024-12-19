@@ -13,11 +13,11 @@ public class Keyboard extends InputDevice {
 		keyState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).value(pressed);
 	}
 
-	public boolean pressed(Key key) {
+	public boolean key(Key key) {
 		return keyState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).value();
 	}
 
-	public Versioned.Reference<Boolean> referenced(Key key) {
+	public Versioned.Reference<Boolean> keyReference(Key key) {
 		return keyState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).reference();
 	}
 

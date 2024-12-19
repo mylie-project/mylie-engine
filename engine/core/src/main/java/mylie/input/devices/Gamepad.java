@@ -4,7 +4,6 @@ import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import mylie.graphics.GraphicsContext;
 import mylie.util.versioned.AutoIncremented;
 import mylie.util.versioned.Versioned;
