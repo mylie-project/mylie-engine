@@ -5,12 +5,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 import mylie.async.*;
-import mylie.component.AppComponent;
-import mylie.component.BaseCoreComponent;
-import mylie.component.Lifecycle;
+import mylie.component.*;
 import mylie.core.Engine;
 import mylie.core.Timer;
 import mylie.core.components.Scheduler;
+import mylie.graphics.GraphicsManager;
+import mylie.graphics.GraphicsModule;
 import mylie.input.InputModule;
 
 @Slf4j
@@ -45,11 +45,14 @@ public final class ApplicationModule extends BaseCoreComponent implements Lifecy
 
 	@Override
 	public void onUpdate(Timer.Time time) {
+		componentManager().updateComponents(componentManager().components(), AppComponentParallel.class,time);
 		if (!initialized) {
 			initialized = true;
 			Async.async(appExecutionMode, time.version(), InitApplication, application, this::component);
 		}
+		Wait.wait(componentManager().updateComponents(componentManager().components(), AppComponentSequential.class,time));
 		Wait.wait(Async.async(appExecutionMode, time.version(), UpdateApplication, application, time));
+		component(GraphicsModule.class).waitForSync();
 	}
 
 	@Override

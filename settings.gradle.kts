@@ -15,6 +15,12 @@ project(":lwjgl3.opengl").projectDir=file("backends/lwjgl3/opengl")
 include("examples.tests")
 project(":examples.tests").projectDir=file("examples/tests")
 
+include(":extensions.input.xinput")
+project(":extensions.input.xinput").projectDir=file("extensions/input/xinput")
+
+include(":extensions.gui.imgui")
+project(":extensions.gui.imgui").projectDir=file("extensions/gui/imgui")
+
 dependencyResolutionManagement{
     versionCatalogs{
         create("libs"){
@@ -23,7 +29,7 @@ dependencyResolutionManagement{
             version("slf4j","2.0.16")
             version("joml","1.10.7")
             version("lwjgl3","3.3.5")
-            version("imgui","1.87.6")
+            version("imgui","1.87.7")
 
             library("lombok","org.projectlombok","lombok").versionRef("lombok")
             library("logging.api","org.slf4j","slf4j-api").versionRef("slf4j")

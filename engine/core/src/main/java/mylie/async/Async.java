@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Setter;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -79,11 +81,15 @@ public class Async {
 		return Objects.hash(function, Arrays.hashCode(objects));
 	}
 
+	@Synchronized
 	public static <R> Result<R> executeTask(ExecutionMode executionMode, int hash, long version, Supplier<R> supplier) {
 		Result<R> result;
 		if (direct(executionMode)) {
-			result = Results.fixed(hash, version, supplier.get());
+			result = Results.fixed(hash, version, null);
 			executionMode.cache().set(result);
+			if(result instanceof Results.Fixed<R> fixed){
+				fixed.result(supplier.get());
+			}
 		} else {
 			result = scheduler.executeTask(executionMode, hash, version, supplier);
 		}

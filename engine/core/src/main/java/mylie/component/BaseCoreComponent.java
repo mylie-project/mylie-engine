@@ -2,7 +2,7 @@ package mylie.component;
 
 import mylie.core.EngineConfiguration;
 
-public class BaseCoreComponent extends BaseComponent implements CoreComponent {
+public non-sealed abstract class BaseCoreComponent extends BaseComponent implements CoreComponent {
 
 	protected <T extends Component> T component(Class<? extends T> type) {
 		return componentManager().getComponent(type);

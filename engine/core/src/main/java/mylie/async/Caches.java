@@ -2,6 +2,8 @@ package mylie.async;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -82,7 +84,7 @@ public final class Caches {
 	 * instance while ensuring removal from the global cache.
 	 */
 	public static final Cache OneFrame = new Cache("OneFrame") {
-		private final Map<Integer, Result<?>> results = new HashMap<>();
+		private final Map<Integer, Result<?>> results = new ConcurrentHashMap<>();
 
 		@SuppressWarnings("unchecked")
 		@Override

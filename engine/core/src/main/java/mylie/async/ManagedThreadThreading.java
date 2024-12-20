@@ -54,5 +54,6 @@ public class ManagedThreadThreading implements ManagedThread {
 		} catch (InterruptedException e) {
 			log.error("Error while stopping thread: {}", e.getMessage(), e);
 		}
+
 	}
 }

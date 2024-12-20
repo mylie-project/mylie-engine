@@ -34,6 +34,12 @@ public class GraphicsModule extends BaseCoreComponent
 		api.onInitialize(componentManager());
 	}
 
+	public void waitForSync() {
+		while (!swapBufferQueue.isEmpty()) {
+			swapBufferQueue.removeFirst().result();
+		}
+	}
+
 	public GraphicsContext createContext(GraphicsContextConfiguration configuration, boolean synced) {
 		GraphicsContext graphicsContext = api.contextProvider().createContext(configuration, primaryContext);
 		if (primaryContext == null) {
@@ -54,9 +60,6 @@ public class GraphicsModule extends BaseCoreComponent
 
 	@Override
 	public void onUpdate(Timer.Time time) {
-		while (!swapBufferQueue.isEmpty()) {
-			swapBufferQueue.removeFirst().result();
-		}
 		for (GraphicsContext activeContext : syncedContexts) {
 			swapBufferQueue.add(activeContext.swapBuffers());
 		}

@@ -14,6 +14,12 @@ public class SchedulerExecutor extends SchedulerThreading implements Scheduler.T
 	}
 
 	@Override
+	public void shutdown() {
+		super.shutdown();
+		executorService.shutdown();
+	}
+
+	@Override
 	public <R> Result<R> executeTask(int hash, long version, Supplier<R> task, ExecutionMode executionMode) {
 		// CompletableFuture<R> future = CompletableFuture.supplyAsync(task,
 		// executorService);

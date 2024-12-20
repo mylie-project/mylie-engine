@@ -7,6 +7,8 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":platform.desktop"))
     implementation(project(":lwjgl3.opengl"))
+    implementation(project(":extensions.input.xinput"))
+    implementation(project(":extensions.gui.imgui"))
     runtimeOnly(libs.logging.runtime)
 }
 

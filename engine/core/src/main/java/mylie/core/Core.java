@@ -73,7 +73,14 @@ public class Core implements PropertiesAA<Engine, Engine.Property<?>> {
 		}
 		componentManager.shutdown(time);
 		scheduler.shutdown();
-	}
+		//todo: don't know why, but this 100ms sleep fixed the shutdown issue
+		//if not added the vm crashes on exit (sometimes). Engine and main thread are shutdown regularly.
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	void onShutdown(Engine.ShutdownReason reason) {
 		shutdownReason = reason;

@@ -2,16 +2,19 @@ package mylie.examples.tests;
 
 import lombok.extern.slf4j.Slf4j;
 import mylie.application.BaseApplication;
+import mylie.async.SchedulerSettings;
 import mylie.core.*;
 import mylie.examples.utils.IconFactory;
 import mylie.graphics.GraphicsContext;
 import mylie.graphics.GraphicsContextConfiguration;
 import mylie.graphics.GraphicsManager;
+import mylie.gui.imgui.ImGui;
 import mylie.input.InputEvent;
 import mylie.input.InputManager;
 import mylie.input.RawInputListener;
 import mylie.input.devices.Gamepad;
 import mylie.input.devices.Keyboard;
+import mylie.input.xinput.XinputProvider;
 import mylie.lwjgl3.opengl.Lwjgl3OpenGlSettings;
 import mylie.platform.desktop.Desktop;
 import mylie.util.versioned.Versioned;
@@ -28,9 +31,9 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		EngineConfiguration configuration = Platform.initialize(new Desktop());
 		configuration.option(Engine.Options.Application, new HelloEngine());
 		configuration.option(Engine.Options.GraphicsApi, new Lwjgl3OpenGlSettings());
-		// configuration.option(Engine.Options.Scheduler,
-		// SchedulerSettings.SingleThreaded);
+		// configuration.option(Engine.Options.Scheduler, SchedulerSettings.SingleThreaded);
 		Engine.ShutdownReason shutdownReason = Engine.start(configuration);
+		//System.out.println(shutdownReason);
 	}
 
 	@Override
@@ -45,7 +48,11 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		gcc.option(GraphicsContext.Option.Cursor, GraphicsContext.Option.CursorMode.Normal);
 		context = component(GraphicsManager.class).createContext(gcc, true);
 		component(InputManager.class).addInputListener(this);
-		escapeKey = component(InputManager.class).keyboard().referenced(Keyboard.Key.ESCAPE);
+		escapeKey = component(InputManager.class).keyboard().keyReference(Keyboard.Key.ESCAPE);
+		component(new XinputProvider());
+		ImGui imGui = new ImGui();
+		component(imGui);
+		imGui.addContext(context);
 	}
 
 	@Override
@@ -65,6 +72,10 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 	public void onEvent(InputEvent<?> event) {
 		if (event instanceof Gamepad.GamepadEvent<?> gamepadEvent) {
 			log.info("Gamepad event: {}", gamepadEvent);
+			/*
+			 * if(gamepadEvent.device() instanceof XinputProvider.XInputGamepad
+			 * xInputGamepad){ xInputGamepad.rumble(0,1); xInputGamepad.rumble(1,1); }
+			 */
 		}
 		// log.info("Input event: {}", event);
 	}

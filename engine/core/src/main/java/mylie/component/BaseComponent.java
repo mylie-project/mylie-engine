@@ -5,10 +5,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import mylie.async.*;
 import mylie.core.Timer;
-
-public abstract class BaseComponent implements Component {
+@Slf4j
+public abstract sealed class BaseComponent implements Component
+		permits BaseCoreComponent, BaseAppComponent {
 	@Setter(AccessLevel.PACKAGE)
 	@Getter(AccessLevel.PACKAGE)
 	private ComponentManager componentManager;
@@ -16,12 +18,26 @@ public abstract class BaseComponent implements Component {
 	@Setter(AccessLevel.PACKAGE)
 	private boolean initialized = false, enabled = false, requestEnabled = true;
 
-	@Setter(AccessLevel.PACKAGE)
+	@Setter(AccessLevel.PROTECTED)
 	private ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Target.Background,
 			Caches.OneFrame);
 
 	@Getter(AccessLevel.PACKAGE)
 	private final List<BaseComponent> dependencies = new CopyOnWriteArrayList<>();
+
+	void runAfter(Class<? extends Component> component1) {
+		Component theComponent = componentManager().getComponent(component1);
+		if (theComponent instanceof BaseComponent baseComponent) {
+			dependencies().add(baseComponent);
+		}
+	}
+
+	void runBefore(Class<? extends Component> component1) {
+		Component theComponent = componentManager().getComponent(component1);
+		if (theComponent instanceof BaseComponent baseComponent) {
+			baseComponent.dependencies().add(this);
+		}
+	}
 
 	Result<Async.Void> update(Timer.Time time) {
 		return Async.async(executionMode, time.version(), UpdateComponent, this, time);
@@ -64,10 +80,12 @@ public abstract class BaseComponent implements Component {
 			"DestroyComponent") {
 		@Override
 		protected Async.Void run(BaseComponent component, Timer.Time time) {
+			Wait.wait(Async.async(dependencies, BaseComponent.class, BaseComponent::shutdown, time));
 			if (component instanceof Lifecycle.InitDestroy initDestroy) {
 				initDestroy.onDestroy();
 			}
 			return Async.VOID;
 		}
 	};
+
 }

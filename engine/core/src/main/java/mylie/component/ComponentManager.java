@@ -1,11 +1,15 @@
 package mylie.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiFunction;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import mylie.async.Async;
+import mylie.async.Result;
 import mylie.async.Wait;
 import mylie.core.Core;
 import mylie.core.Timer;
@@ -15,6 +19,7 @@ public final class ComponentManager {
 	@Getter(AccessLevel.PACKAGE)
 	private final Core core;
 
+	@Getter
 	private final List<Component> components = new CopyOnWriteArrayList<>();
 
 	public ComponentManager(Core core) {
@@ -54,11 +59,15 @@ public final class ComponentManager {
 		return null;
 	}
 
+	public <O extends BaseComponent> Iterable<Result<Async.Void>> updateComponents(List<?> objects, Class<? extends O> type, Timer.Time time){
+		return Async.async(objects,type,BaseComponent::update,time);
+	}
+
 	public void update(Timer.Time time) {
-		Wait.wait(Async.async(components, BaseComponent.class, BaseComponent::update, time));
+		Wait.wait(Async.async(components, BaseCoreComponent.class, BaseCoreComponent::update, time));
 	}
 
 	public void shutdown(Timer.Time time) {
-		Wait.wait(Async.async(components, BaseComponent.class, BaseComponent::shutdown, time));
+		Wait.wait(Async.async(components, BaseCoreComponent.class, BaseCoreComponent::shutdown, time));
 	}
 }

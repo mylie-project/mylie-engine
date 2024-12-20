@@ -27,7 +27,7 @@ public abstract class GraphicsContext
 	@Getter(AccessLevel.PUBLIC)
 	private final GraphicsContextConfiguration configuration;
 
-	@Getter(AccessLevel.PROTECTED)
+	@Getter(AccessLevel.PUBLIC)
 	private final ExecutionMode executionMode;
 
 	@Getter(AccessLevel.PROTECTED)

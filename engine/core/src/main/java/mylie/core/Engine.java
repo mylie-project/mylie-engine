@@ -54,7 +54,7 @@ public class Engine {
 				log.info("Engine restart");
 			}
 		} while (restart);
-		return null;
+		return shutdownReason;
 	}
 
 	@Getter
