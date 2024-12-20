@@ -8,6 +8,7 @@ import mylie.examples.utils.IconFactory;
 import mylie.graphics.GraphicsContext;
 import mylie.graphics.GraphicsContextConfiguration;
 import mylie.graphics.GraphicsManager;
+import mylie.gui.imgui.ControlPanel;
 import mylie.gui.imgui.ImGui;
 import mylie.input.InputEvent;
 import mylie.input.InputManager;
@@ -25,6 +26,8 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 	GraphicsContext.VideoMode windowed = new GraphicsContext.VideoMode.Windowed(null, new Vector2i(800, 600),
 			GraphicsContext.VideoMode.Windowed.Centered);
 	GraphicsContext.VideoMode fullscreen = new GraphicsContext.VideoMode.Fullscreen(null, null);
+	GraphicsContext.VideoMode[] videoModes = { windowed, fullscreen };
+	int currentVideoMode = 0;
 	GraphicsContext context;
 	Versioned.Reference<Boolean> escapeKey;
 	public static void main(String[] args) {
@@ -33,7 +36,6 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		configuration.option(Engine.Options.GraphicsApi, new Lwjgl3OpenGlSettings());
 		// configuration.option(Engine.Options.Scheduler, SchedulerSettings.SingleThreaded);
 		Engine.ShutdownReason shutdownReason = Engine.start(configuration);
-		//System.out.println(shutdownReason);
 	}
 
 	@Override
@@ -43,7 +45,7 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		gcc.option(GraphicsContext.Option.AlwaysOnTop, true);
 		gcc.option(GraphicsContext.Option.Title, "Hello Engine");
 		gcc.option(GraphicsContext.Option.VideoMode, windowed);
-		gcc.option(GraphicsContext.Option.VSync, false);
+		gcc.option(GraphicsContext.Option.VSync, true);
 		gcc.option(GraphicsContext.Option.Icons, IconFactory.getDefaultIcons());
 		gcc.option(GraphicsContext.Option.Cursor, GraphicsContext.Option.CursorMode.Normal);
 		context = component(GraphicsManager.class).createContext(gcc, true);
@@ -52,7 +54,7 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		component(new XinputProvider());
 		ImGui imGui = new ImGui();
 		component(imGui);
-		imGui.addContext(context);
+		imGui.component(new ControlPanel(2),context);
 	}
 
 	@Override
@@ -72,10 +74,15 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 	public void onEvent(InputEvent<?> event) {
 		if (event instanceof Gamepad.GamepadEvent<?> gamepadEvent) {
 			log.info("Gamepad event: {}", gamepadEvent);
-			/*
-			 * if(gamepadEvent.device() instanceof XinputProvider.XInputGamepad
-			 * xInputGamepad){ xInputGamepad.rumble(0,1); xInputGamepad.rumble(1,1); }
-			 */
+		}
+		if(event instanceof Keyboard.KeyEvent keyEvent){
+			if(keyEvent.key() == Keyboard.Key.F11 && keyEvent.value()){
+				currentVideoMode = (currentVideoMode + 1) % videoModes.length;
+				context.option(GraphicsContext.Option.VideoMode, videoModes[currentVideoMode]);
+			}
+			if(keyEvent.key() == Keyboard.Key.F12 && keyEvent.value()){
+				context.option(GraphicsContext.Option.VSync, !context.option(GraphicsContext.Option.VSync));
+			}
 		}
 		// log.info("Input event: {}", event);
 	}

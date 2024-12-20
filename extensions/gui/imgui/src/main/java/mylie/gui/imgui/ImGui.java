@@ -67,9 +67,7 @@ public class ImGui extends AppComponentParallel implements RawInputListener, Lif
         }
     }
 
-    public void addContext(GraphicsContext context) {
-        contexts.put(context,new Context(context));
-    }
+
 
     @Override
     public void onInit() {
@@ -81,7 +79,6 @@ public class ImGui extends AppComponentParallel implements RawInputListener, Lif
         for (Context value : contexts.values()) {
             value.shutdown();
         }
-        log.info("Shutting down ImGui");
     }
 
     public static final Functions.F1<Async.Void, Timer.Time, Context> Render = new Functions.F1<>("Render") {
@@ -91,6 +88,12 @@ public class ImGui extends AppComponentParallel implements RawInputListener, Lif
             return Async.VOID;
         }
     };
+
+    public void component(ImGuiComponent component, GraphicsContext context) {
+        Context imguiContext = contexts.computeIfAbsent(context, Context::new);
+        imguiContext.components.add(component);
+    }
+
 
     @Getter
     public final static class Context{
@@ -133,7 +136,6 @@ public class ImGui extends AppComponentParallel implements RawInputListener, Lif
             for (ImGuiComponent component : components) {
                 component.renderImGui(time);
             }
-            imgui.ImGui.showDemoWindow();
 
             imgui.ImGui.endFrame();
             imgui.ImGui.render();

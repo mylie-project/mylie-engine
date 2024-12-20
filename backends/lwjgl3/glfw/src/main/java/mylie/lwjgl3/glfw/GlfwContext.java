@@ -37,6 +37,7 @@ public class GlfwContext extends GraphicsContext {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T> void onOptionChanged(mylie.util.configuration.Option<GraphicsContext, T> option, T value) {
+		log.trace("Context<{}> : Option<{}> has changed to value '{}'", this, option.name(), value);
 		ExecutionMode executionMode = option == Option.VSync ? executionMode() : engine;
 		if (option instanceof GlfwOption<T>) {
 			GlfwOption<Object> glfwOption = (GlfwOption<Object>) option;
@@ -127,7 +128,6 @@ public class GlfwContext extends GraphicsContext {
 	private static final Functions.F0<Async.Void, GlfwContext> ShutdownContext = new Functions.F0<>("ShutdownContext") {
 		@Override
 		protected Async.Void run(GlfwContext context) {
-			log.info("adsf");
 			context.callbacks().free();
 			GLFW.glfwMakeContextCurrent(MemoryUtil.NULL);
 			GLFW.glfwDestroyWindow(context.handle());

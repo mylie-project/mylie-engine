@@ -1,5 +1,7 @@
 package mylie.util.configuration;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 
 public abstract class Configurations<TARGET, OPTION extends Option<TARGET, ?>> {
@@ -8,7 +10,7 @@ public abstract class Configurations<TARGET, OPTION extends Option<TARGET, ?>> {
 	protected abstract <T> T option(Option<TARGET, T> option);
 
 	protected abstract Iterable<Option<TARGET, ?>> options();
-
+@Slf4j
 	public static class Map<TARGET, OPTION extends Option<TARGET, ?>> extends Configurations<TARGET, OPTION> {
 		private final java.util.Map<Option<TARGET, ?>, Object> dataStore = new HashMap<>();
 
