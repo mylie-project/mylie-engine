@@ -3,7 +3,6 @@ package mylie.graphics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,7 @@ public class GraphicsContextConfiguration extends Configurations.Map<GraphicsCon
 
 		boolean changed = false;
 		T oldValue = option(option);
-		if(!Objects.equals(oldValue, value)) {
+		if (!Objects.equals(oldValue, value)) {
 			changed = true;
 		}
 		super.option(option, value);

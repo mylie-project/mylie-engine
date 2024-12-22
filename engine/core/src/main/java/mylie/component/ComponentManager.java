@@ -1,10 +1,7 @@
 package mylie.component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiFunction;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -59,8 +56,9 @@ public final class ComponentManager {
 		return null;
 	}
 
-	public <O extends BaseComponent> Iterable<Result<Async.Void>> updateComponents(List<?> objects, Class<? extends O> type, Timer.Time time){
-		return Async.async(objects,type,BaseComponent::update,time);
+	public <O extends BaseComponent> Iterable<Result<Async.Void>> updateComponents(List<?> objects,
+			Class<? extends O> type, Timer.Time time) {
+		return Async.async(objects, type, BaseComponent::update, time);
 	}
 
 	public void update(Timer.Time time) {

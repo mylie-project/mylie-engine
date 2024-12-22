@@ -2,7 +2,6 @@ package mylie.examples.tests;
 
 import lombok.extern.slf4j.Slf4j;
 import mylie.application.BaseApplication;
-import mylie.async.SchedulerSettings;
 import mylie.core.*;
 import mylie.examples.utils.IconFactory;
 import mylie.graphics.GraphicsContext;
@@ -26,7 +25,7 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 	GraphicsContext.VideoMode windowed = new GraphicsContext.VideoMode.Windowed(null, new Vector2i(800, 600),
 			GraphicsContext.VideoMode.Windowed.Centered);
 	GraphicsContext.VideoMode fullscreen = new GraphicsContext.VideoMode.Fullscreen(null, null);
-	GraphicsContext.VideoMode[] videoModes = { windowed, fullscreen };
+	GraphicsContext.VideoMode[] videoModes = {windowed, fullscreen};
 	int currentVideoMode = 0;
 	GraphicsContext context;
 	Versioned.Reference<Boolean> escapeKey;
@@ -34,7 +33,8 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		EngineConfiguration configuration = Platform.initialize(new Desktop());
 		configuration.option(Engine.Options.Application, new HelloEngine());
 		configuration.option(Engine.Options.GraphicsApi, new Lwjgl3OpenGlSettings());
-		// configuration.option(Engine.Options.Scheduler, SchedulerSettings.SingleThreaded);
+		// configuration.option(Engine.Options.Scheduler,
+		// SchedulerSettings.SingleThreaded);
 		Engine.ShutdownReason shutdownReason = Engine.start(configuration);
 	}
 
@@ -54,7 +54,7 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		component(new XinputProvider());
 		ImGui imGui = new ImGui();
 		component(imGui);
-		imGui.component(new ControlPanel(2),context);
+		imGui.component(new ControlPanel(2), context);
 	}
 
 	@Override
@@ -75,12 +75,12 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		if (event instanceof Gamepad.GamepadEvent<?> gamepadEvent) {
 			log.info("Gamepad event: {}", gamepadEvent);
 		}
-		if(event instanceof Keyboard.KeyEvent keyEvent){
-			if(keyEvent.key() == Keyboard.Key.F11 && keyEvent.value()){
+		if (event instanceof Keyboard.KeyEvent keyEvent) {
+			if (keyEvent.key() == Keyboard.Key.F11 && keyEvent.value()) {
 				currentVideoMode = (currentVideoMode + 1) % videoModes.length;
 				context.option(GraphicsContext.Option.VideoMode, videoModes[currentVideoMode]);
 			}
-			if(keyEvent.key() == Keyboard.Key.F12 && keyEvent.value()){
+			if (keyEvent.key() == Keyboard.Key.F12 && keyEvent.value()) {
 				context.option(GraphicsContext.Option.VSync, !context.option(GraphicsContext.Option.VSync));
 			}
 		}

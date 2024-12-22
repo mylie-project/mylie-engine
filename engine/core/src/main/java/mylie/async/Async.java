@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
@@ -87,7 +86,7 @@ public class Async {
 		if (direct(executionMode)) {
 			result = Results.fixed(hash, version, null);
 			executionMode.cache().set(result);
-			if(result instanceof Results.Fixed<R> fixed){
+			if (result instanceof Results.Fixed<R> fixed) {
 				fixed.result(supplier.get());
 			}
 		} else {

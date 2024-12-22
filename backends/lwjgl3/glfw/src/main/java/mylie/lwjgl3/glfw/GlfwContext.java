@@ -48,8 +48,9 @@ public class GlfwContext extends GraphicsContext {
 	@Override
 	protected Result<Async.Void> destroy() {
 		Async.async(executionMode(), -1, Release, this).result();
-		return Async.async(new ExecutionMode(ExecutionMode.Mode.Async,Engine.Target,Caches.No), -1, ShutdownContext, this);
-		//return Async.async(executionMode(), -1, ShutdownContext, this);
+		return Async.async(new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No), -1, ShutdownContext,
+				this);
+		// return Async.async(executionMode(), -1, ShutdownContext, this);
 	}
 
 	@Override
@@ -131,7 +132,7 @@ public class GlfwContext extends GraphicsContext {
 			context.callbacks().free();
 			GLFW.glfwMakeContextCurrent(MemoryUtil.NULL);
 			GLFW.glfwDestroyWindow(context.handle());
-			//GLFW.glfwTerminate();
+			// GLFW.glfwTerminate();
 
 			return Async.VOID;
 		}

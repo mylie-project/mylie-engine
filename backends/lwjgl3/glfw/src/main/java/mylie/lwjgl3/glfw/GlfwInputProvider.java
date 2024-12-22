@@ -214,9 +214,10 @@ public class GlfwInputProvider implements InputProvider {
 			try (MemoryStack stack = MemoryStack.stackPush()) {
 				GLFWGamepadState state = GLFWGamepadState.malloc(stack);
 				if (GLFW.glfwGetGamepadState(id(), state)) {
-
 					if (!connected()) {
 						String gamepadName = GLFW.glfwGetGamepadName(id());
+						guid(GLFW.glfwGetJoystickGUID(id()));
+						log.error("Gamepad {} connected: {}", guid(), gamepadName);
 						name(gamepadName);
 						log.trace("Gamepad {} connected: {}", id(), gamepadName);
 						gamepadEvents.add(new Gamepad.ConnectedEvent(null, this, true));

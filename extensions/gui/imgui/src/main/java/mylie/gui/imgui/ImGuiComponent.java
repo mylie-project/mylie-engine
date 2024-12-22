@@ -3,7 +3,7 @@ package mylie.gui.imgui;
 import mylie.component.AppComponent;
 import mylie.core.Timer;
 
-public interface ImGuiComponent extends AppComponent{
+public interface ImGuiComponent extends AppComponent {
 
-    void renderImGui(Timer.Time time);
+	void renderImGui(Timer.Time time);
 }

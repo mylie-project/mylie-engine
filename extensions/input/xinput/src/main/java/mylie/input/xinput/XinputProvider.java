@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import mylie.async.*;
 import mylie.component.AppComponent;
 import mylie.component.AppComponentParallel;
-import mylie.component.BaseCoreComponent;
 import mylie.component.Lifecycle;
 import mylie.input.InputEvent;
 import mylie.input.InputManager;
@@ -35,6 +34,8 @@ public class XinputProvider extends AppComponentParallel implements AppComponent
 	public void onInit() {
 		log.info("Loading XInput");
 		try {
+			XInputDevice14[] allDevices1 = XInputDevice14.getAllDevices();
+			log.error("Xinput 14 {}", XInputDevice14.isAvailable());
 			XInputDevice[] allDevices = XInputDevice.getAllDevices();
 			for (int i = 0; i < allDevices.length; i++) {
 				gamepads.add(new XInputGamepad(i, allDevices[i]));
@@ -61,15 +62,12 @@ public class XinputProvider extends AppComponentParallel implements AppComponent
 			rumbleMotors(2);
 		}
 
-		@Override
-		public void rumble(int motor, float strength) {
-			if (motor == 0) {
-				left = (int) (strength * 65535);
-			} else if (motor == 1) {
-				right = (int) (strength * 65535);
-			}
-			device.setVibration(Math.min(left, 65535), Math.min(right, 65535));
-		}
+		/*
+		 * @Override public void rumble(int motor, float strength) { if (motor == 0) {
+		 * left = (int) (strength * 65535); } else if (motor == 1) { right = (int)
+		 * (strength * 65535); } device.setVibration(Math.min(left, 65535),
+		 * Math.min(right, 65535)); }
+		 */
 
 		public void update(List<InputEvent<?>> eventsList) {
 			boolean connected = device.isConnected();

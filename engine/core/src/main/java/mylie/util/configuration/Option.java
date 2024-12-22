@@ -3,7 +3,7 @@ package mylie.util.configuration;
 import lombok.Getter;
 
 public abstract class Option<O, T> {
-    @Getter
+	@Getter
 	final String name;
 	final T defaultValue;
 

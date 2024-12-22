@@ -9,8 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import mylie.async.*;
 import mylie.core.Timer;
 @Slf4j
-public abstract sealed class BaseComponent implements Component
-		permits BaseCoreComponent, BaseAppComponent {
+public abstract sealed class BaseComponent implements Component permits BaseCoreComponent, BaseAppComponent {
 	@Setter(AccessLevel.PACKAGE)
 	@Getter(AccessLevel.PACKAGE)
 	private ComponentManager componentManager;

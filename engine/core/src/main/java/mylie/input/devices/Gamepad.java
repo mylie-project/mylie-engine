@@ -13,6 +13,9 @@ public class Gamepad extends InputDevice {
 	final int id;
 	@Getter
 	@Setter(AccessLevel.PROTECTED)
+	String guid;
+	@Getter
+	@Setter(AccessLevel.PROTECTED)
 	String name;
 	@Setter(AccessLevel.PROTECTED)
 	int rumbleMotors = 0;
@@ -21,20 +24,23 @@ public class Gamepad extends InputDevice {
 		this.id = id;
 		this.provider = provider;
 	}
+
 	private final Versioned<Boolean> connected = new AutoIncremented<>(false);
-	private final Map<Gamepad.Button, Versioned<Boolean>> keyState = new java.util.HashMap<>();
+	@Getter(AccessLevel.PROTECTED)
+	private final Map<Gamepad.Button, Versioned<Boolean>> buttonState = new java.util.HashMap<>();
+	@Getter(AccessLevel.PROTECTED)
 	private final Map<Gamepad.Axis, Versioned<Float>> axisState = new java.util.HashMap<>();
 
-	public void rumble(int motor, float strength) {
-
+	protected void connected(boolean connected) {
+		this.connected.value(connected);
 	}
 
 	public boolean button(Gamepad.Button key) {
-		return keyState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).value();
+		return buttonState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).value();
 	}
 
 	public Versioned.Reference<Boolean> buttonReference(Gamepad.Button key) {
-		return keyState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).reference();
+		return buttonState.computeIfAbsent(key, _ -> new AutoIncremented<>(false)).reference();
 	}
 
 	public float axis(Gamepad.Axis key) {
@@ -80,7 +86,7 @@ public class Gamepad extends InputDevice {
 		public ButtonEvent(GraphicsContext context, Gamepad device, Button button, boolean pressed) {
 			super(context, device, pressed);
 			this.button = button;
-			device.keyState.computeIfAbsent(button, _ -> new AutoIncremented<>(pressed)).value(pressed);
+			device.buttonState.computeIfAbsent(button, _ -> new AutoIncremented<>(pressed)).value(pressed);
 		}
 		@Override
 		public String toString() {
