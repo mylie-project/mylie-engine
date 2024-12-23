@@ -44,7 +44,8 @@ public class GraphicsModule extends BaseCoreComponent
 
 	public GraphicsContext createContext(GraphicsContextConfiguration configuration, boolean synced) {
 		GraphicsContext graphicsContext = api.contextProvider().createContext(configuration, primaryContext);
-		Result<Async.Void> init = Async.async(graphicsContext.executionMode(), Integer.MAX_VALUE, initContext, graphicsContext, api, primaryContext);
+		Result<Async.Void> init = Async.async(graphicsContext.executionMode(), Integer.MAX_VALUE, initContext,
+				graphicsContext, api, primaryContext);
 		if (primaryContext == null) {
 			primaryContext = graphicsContext;
 		}
@@ -85,18 +86,27 @@ public class GraphicsModule extends BaseCoreComponent
 		}
 	}
 
-	private static final Functions.F2<Async.Void, GraphicsContext, Api,GraphicsContext> initContext =
-			new Functions.F2<>("InitContext") {
+	private static final Functions.F2<Async.Void, GraphicsContext, Api, GraphicsContext> initContext = new Functions.F2<>(
+			"InitContext") {
 
-				@Override
-				protected Async.Void run(GraphicsContext context, Api graphicsApi, GraphicsContext primaryContext) {
-					BindingState.init();
-					if(primaryContext == null) {
-						GraphicsCapabilities.Capability.initAll(context);
-						graphicsApi.initApiFeatures(context);
-						graphicsApi.initApiManagers(context);
-					}
-					return Async.VOID;
+		@Override
+		protected Async.Void run(GraphicsContext context, Api graphicsApi, GraphicsContext primaryContext) {
+			BindingState.init();
+
+			if (primaryContext == null) {
+				GraphicsCapabilities.Capability.initAll(context);
+				graphicsApi.initApiFeatures(context, primaryContext);
+				graphicsApi.initApiManagers(context, primaryContext);
+			} else {
+				context.capabilities(primaryContext.capabilities());
+				for (ApiFeature apiFeature : primaryContext.apiFeatures()) {
+					context.apiFeatures().add(apiFeature);
 				}
-			};
+				for (ApiManager apiManager : primaryContext.apiManagers()) {
+					context.apiManagers().add(apiManager);
+				}
+			}
+			return Async.VOID;
+		}
+	};
 }

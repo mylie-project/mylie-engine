@@ -20,11 +20,11 @@ public class Lwjgl3OpenGl extends OpenGl {
 	}
 
 	@Override
-	public void initApiFeatures(GraphicsContext context) {
-		api(context,new Lwjgl3GlRenderTarget());
-		api(context,new Lwjgl3GlVao());
-		api(context,new Lwjgl3Buffer());
-		api(context,new Lwjgl3Rendering());
+	public void initApiFeatures(GraphicsContext context, GraphicsContext primaryContext) {
+		api(context, new Lwjgl3GlRenderTarget());
+		api(context, new Lwjgl3GlVao());
+		api(context, new Lwjgl3Buffer());
+		api(context, new Lwjgl3Rendering());
 	}
 
 	@Override

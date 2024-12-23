@@ -54,7 +54,7 @@ public abstract sealed class BaseComponent implements Component permits BaseCore
 			if (!component.initialized) {
 				component.initialized = true;
 				if (component instanceof Lifecycle.InitDestroy initDestroy) {
-					log.trace("Component<{}>.onInit()",component.getClass().getSimpleName());
+					log.trace("Component<{}>.onInit()", component.getClass().getSimpleName());
 					initDestroy.onInit();
 				}
 			}
@@ -62,17 +62,17 @@ public abstract sealed class BaseComponent implements Component permits BaseCore
 				component.enabled = component.requestEnabled;
 				if (component instanceof Lifecycle.EnableDisable enableDisable) {
 					if (component.enabled) {
-						log.trace("Component<{}>.onEnable()",component.getClass().getSimpleName());
+						log.trace("Component<{}>.onEnable()", component.getClass().getSimpleName());
 						enableDisable.onEnable();
 					} else {
-						log.trace("Component<{}>.onDisable()",component.getClass().getSimpleName());
+						log.trace("Component<{}>.onDisable()", component.getClass().getSimpleName());
 						enableDisable.onDisable();
 					}
 				}
 			}
 			if (component.enabled) {
 				if (component instanceof Lifecycle.Update update) {
-					log.trace("Component<{}>.onUpdate()",component.getClass().getSimpleName());
+					log.trace("Component<{}>.onUpdate()", component.getClass().getSimpleName());
 					update.onUpdate(time);
 				}
 			}
@@ -85,7 +85,7 @@ public abstract sealed class BaseComponent implements Component permits BaseCore
 		protected Async.Void run(BaseComponent component, Timer.Time time) {
 			Wait.wait(Async.async(dependencies, BaseComponent.class, BaseComponent::shutdown, time));
 			if (component instanceof Lifecycle.InitDestroy initDestroy) {
-				log.trace("Component<{}>.onDestroy()",component.getClass().getSimpleName());
+				log.trace("Component<{}>.onDestroy()", component.getClass().getSimpleName());
 				initDestroy.onDestroy();
 			}
 			return Async.VOID;

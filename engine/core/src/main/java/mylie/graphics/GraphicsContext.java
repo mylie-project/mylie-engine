@@ -6,6 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import mylie.async.*;
 import mylie.core.components.Scheduler;
 import mylie.graphics.managers.RenderTarget;
@@ -36,16 +37,17 @@ public abstract class GraphicsContext
 	@Getter(AccessLevel.PROTECTED)
 	private final GraphicsContext primaryContext;
 
-	private final GraphicsCapabilities capabilities=new GraphicsCapabilities();
+	@Setter(AccessLevel.PACKAGE)
+	private GraphicsCapabilities capabilities = new GraphicsCapabilities();
 	@Getter(AccessLevel.PROTECTED)
-	private final List<ApiFeature> apiFeatures=new ArrayList<>();
+	private final List<ApiFeature> apiFeatures = new ArrayList<>();
 	@Getter(AccessLevel.PROTECTED)
-	private final List<ApiManager> apiManagers=new ArrayList<>();
+	private final List<ApiManager> apiManagers = new ArrayList<>();
 	private final ManagedThread contextThread;
 	private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 	private final Target target = new Target("GraphicsContext<" + ++contextCount + ">");
 	@Getter(AccessLevel.PUBLIC)
-	private final RenderTarget renderTarget=RenderTarget.Output;
+	private final RenderTarget renderTarget = RenderTarget.Output;
 
 	public GraphicsContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext,
 			Scheduler scheduler) {
@@ -84,7 +86,7 @@ public abstract class GraphicsContext
 
 	<T extends ApiFeature> T api(Class<T> apiFeatureClass) {
 		for (ApiFeature apiFeature : apiFeatures) {
-			if(apiFeatureClass.isAssignableFrom(apiFeature.getClass())) {
+			if (apiFeatureClass.isAssignableFrom(apiFeature.getClass())) {
 				return apiFeatureClass.cast(apiFeature);
 			}
 		}
@@ -93,7 +95,7 @@ public abstract class GraphicsContext
 
 	public <T extends ApiManager> T manager(Class<T> apiManagerClass) {
 		for (ApiManager apiManager : apiManagers) {
-			if(apiManagerClass.isAssignableFrom(apiManager.getClass())) {
+			if (apiManagerClass.isAssignableFrom(apiManager.getClass())) {
 				return apiManagerClass.cast(apiManager);
 			}
 		}

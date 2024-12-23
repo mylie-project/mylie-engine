@@ -31,7 +31,7 @@ tasks.register<Exec>("renderDoc") {
         "$javaHome/bin/java",
         "--enable-preview",
         "-classpath", sourceSets.main.get().runtimeClasspath.asPath,
-        "mylie.examples.tests.A0_HelloEngine",
+        "mylie.examples.tests.HelloEngine",
 
     )
 }

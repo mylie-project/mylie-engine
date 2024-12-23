@@ -40,7 +40,7 @@ public class ControlPanel implements ImGuiComponent {
 				ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.AlwaysAutoResize);
 		ImGui.text("MyLiE - Control Panel");
 		fpsGraph.update(time);
-		if (ImGui.collapsingHeader("FPS Graph")) {
+		if (ImGui.collapsingHeader("FrameTime Graph")) {
 			fpsGraph.render(time);
 		}
 		ImGui.separator();

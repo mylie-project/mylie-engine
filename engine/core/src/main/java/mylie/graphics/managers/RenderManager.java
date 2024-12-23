@@ -5,6 +5,6 @@ import mylie.graphics.RenderTask;
 import mylie.graphics.geometry.Mesh;
 
 public interface RenderManager extends ApiManager {
-    void render(RenderTask renderTask, Mesh mesh);
+	void render(RenderTask renderTask, Mesh mesh);
 
 }

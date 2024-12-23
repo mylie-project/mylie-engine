@@ -9,13 +9,13 @@ public abstract class Api {
 
 	protected abstract ContextProvider contextProvider();
 
-	public abstract void initApiFeatures(GraphicsContext context);
+	public abstract void initApiFeatures(GraphicsContext context, GraphicsContext primaryContext);
 
-	public abstract void initApiManagers(GraphicsContext context);
+	public abstract void initApiManagers(GraphicsContext context, GraphicsContext primaryContext);
 
-	protected void manager(GraphicsContext context,ApiManager... manager) {
+	protected void manager(GraphicsContext context, ApiManager... manager) {
 		for (ApiManager apiManager : manager) {
-			if(apiManager.isSupported(context)){
+			if (apiManager.isSupported(context)) {
 				log.debug("Creating API manager: {}", apiManager.getClass().getSimpleName());
 				context.apiManagers().add(apiManager);
 				return;
@@ -23,7 +23,7 @@ public abstract class Api {
 		}
 	}
 
-	protected void api(GraphicsContext context,ApiFeature... feature) {
+	protected void api(GraphicsContext context, ApiFeature... feature) {
 		log.debug("Initializing API features: {}", java.util.Arrays.toString(feature));
 		context.apiFeatures().addAll(java.util.Arrays.asList(feature));
 	}
