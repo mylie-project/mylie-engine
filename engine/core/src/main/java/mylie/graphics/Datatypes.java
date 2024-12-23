@@ -81,9 +81,12 @@ public class Datatypes {
         int size();
 
         long version();
+
+        GpuDataType<T> dataType();
     }
 
     public static class ListDataBuffer<T> implements DataBuffer<T> {
+        @Getter
         final GpuDataType<T> dataType;
         private final ArrayList<T> data;
         @Getter
@@ -152,6 +155,7 @@ public class Datatypes {
     }
 
     public static class ArrayDataBuffer<T> implements DataBuffer<T> {
+        @Getter
         final GpuDataType<T> dataType;
         T[] data;
         @Getter

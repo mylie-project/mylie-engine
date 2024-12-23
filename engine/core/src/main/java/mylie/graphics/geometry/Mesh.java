@@ -12,11 +12,10 @@ public class Mesh {
     final VertexDataLayouts.VertexDataLayout vertexDataLayout;
     Data data=new Data();
     final Datatypes.DataBuffer<Integer> indices;
-    final List<Lod> lodLevels;
+    final List<Lod> lodLevels= new ArrayList<>();;
 
     private Mesh(VertexDataLayouts.VertexDataLayout vertexDataLayout) {
         this.vertexDataLayout = vertexDataLayout;
-        this.lodLevels = new ArrayList<>();
         this.indices = new Datatypes.ListDataBuffer<>(Datatypes.Integer);
     }
 
@@ -70,6 +69,10 @@ public class Mesh {
         return (Datatypes.DataBuffer<T>) data.vertexDataBuffers.get(point);
     }
 
+    public Lod lod(int i) {
+        return lodLevels.get(i);
+    }
+
     private static class Data{
         final Map<VertexDataPoints.VertexDataPoint<?>, Datatypes.DataBuffer<?>> vertexDataBuffers=new HashMap<>();
         final Datatypes.DataBuffer<Integer> indices=new Datatypes.ListDataBuffer<>(Datatypes.Integer);
@@ -101,6 +104,7 @@ public class Mesh {
 
         public Lod(RenderMode renderMode, int patchCount) {
             indices = new ArrayList<>();
+            this.renderMode = renderMode;
             this.patchCount = patchCount;
         }
 

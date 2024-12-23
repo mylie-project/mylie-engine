@@ -11,7 +11,9 @@ import mylie.graphics.RenderTask;
 import mylie.graphics.geometry.VertexDataLayouts;
 import mylie.graphics.geometry.VertexDataPoints;
 import mylie.graphics.geometry.meshes.Cube;
+import mylie.graphics.geometry.meshes.Quad;
 import mylie.graphics.managers.MeshManager;
+import mylie.graphics.managers.RenderManager;
 import mylie.graphics.managers.RenderTarget;
 import mylie.graphics.managers.RenderTargetManager;
 import mylie.gui.imgui.ControlPanel;
@@ -38,7 +40,7 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 	GraphicsContext context;
 	Versioned.Reference<Boolean> escapeKey;
 
-	private Cube cube=new Cube(VertexDataLayouts.Unshaded);
+	private Quad cube=new Quad(VertexDataLayouts.Unshaded);
 
 	public static void main(String[] args) {
 		EngineConfiguration configuration = Platform.initialize(new Desktop());
@@ -75,11 +77,11 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 			component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("Escape pressed"));
 		}
 		RenderTask renderTask = new RenderTask(context);
-		if(time.version()%2==0){
-			cube.vertexData(VertexDataPoints.Position,1,new Vector3f(0,0,0));
-		}
+		//if(time.version()%2==0){
+		//	cube.vertexData(VertexDataPoints.Position,1,new Vector3f(0,0,0));
+		//}
 		context.manager(RenderTargetManager.class).clearRenderTarget(renderTask,context.renderTarget(), RenderTarget.ClearOperation.Default);
-		context.manager(MeshManager.class).bindMesh(renderTask, cube);
+		context.manager(RenderManager.class).render(renderTask, cube);
 		renderTask.submit();
 	}
 

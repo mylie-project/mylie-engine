@@ -7,6 +7,7 @@ import mylie.graphics.GraphicsContext;
 import mylie.graphics.opengl.api.GlGet;
 import mylie.graphics.opengl.managers.GlBufferManager;
 import mylie.graphics.opengl.managers.GlMeshManager;
+import mylie.graphics.opengl.managers.GlRenderManager;
 import mylie.graphics.opengl.managers.GlRenderTargetManager;
 
 import java.util.function.BiFunction;
@@ -32,6 +33,7 @@ public abstract class OpenGl extends Api {
         manager(context,new GlRenderTargetManager());
         manager(context,new GlBufferManager());
         manager(context,new GlMeshManager());
+        manager(context,new GlRenderManager());
     }
 
 

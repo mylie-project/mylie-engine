@@ -8,6 +8,7 @@ import mylie.lwjgl3.glfw.GlfwContextProvider;
 import mylie.lwjgl3.opengl.api.Lwjgl3Buffer;
 import mylie.lwjgl3.opengl.api.Lwjgl3GlRenderTarget;
 import mylie.lwjgl3.opengl.api.Lwjgl3GlVao;
+import mylie.lwjgl3.opengl.api.Lwjgl3Rendering;
 
 @Getter
 public class Lwjgl3OpenGl extends OpenGl {
@@ -23,6 +24,7 @@ public class Lwjgl3OpenGl extends OpenGl {
 		api(context,new Lwjgl3GlRenderTarget());
 		api(context,new Lwjgl3GlVao());
 		api(context,new Lwjgl3Buffer());
+		api(context,new Lwjgl3Rendering());
 	}
 
 	@Override

@@ -28,8 +28,6 @@ public class GlMeshManager implements MeshManager {
             handle = new VaoHandle();
             meshHandles.put(renderTask.context(), mesh, handle);
             glVao.createVao(handle);
-
-
         }
         glVao.bindVao(handle);
         if (handle.version() < mesh.version()) {
