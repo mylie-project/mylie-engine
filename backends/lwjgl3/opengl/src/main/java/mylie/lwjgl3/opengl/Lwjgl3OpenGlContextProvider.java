@@ -19,6 +19,8 @@ public class Lwjgl3OpenGlContextProvider extends GlfwContextProvider {
 	private final ExecutionMode executionMode = new ExecutionMode(ExecutionMode.Mode.Async, Engine.Target, Caches.No);
 	private mylie.core.components.Scheduler scheduler;
 
+
+
 	@Override
 	public void onInitialize(ComponentManager componentManager) {
 		super.onInitialize(componentManager);

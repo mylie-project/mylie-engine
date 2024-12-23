@@ -7,6 +7,9 @@ import mylie.examples.utils.IconFactory;
 import mylie.graphics.GraphicsContext;
 import mylie.graphics.GraphicsContextConfiguration;
 import mylie.graphics.GraphicsManager;
+import mylie.graphics.RenderTask;
+import mylie.graphics.managers.RenderTarget;
+import mylie.graphics.managers.RenderTargetManager;
 import mylie.gui.imgui.ControlPanel;
 import mylie.gui.imgui.ImGui;
 import mylie.input.InputEvent;
@@ -63,6 +66,9 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		if (escapeKey.value()) {
 			component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("Escape pressed"));
 		}
+		RenderTask renderTask = new RenderTask(context);
+		context.manager(RenderTargetManager.class).clearRenderTarget(renderTask,context.renderTarget(), RenderTarget.ClearOperation.Default);
+		renderTask.submit();
 	}
 
 	@Override
@@ -72,9 +78,6 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 
 	@Override
 	public void onEvent(InputEvent<?> event) {
-		if (event instanceof Gamepad.GamepadEvent<?> gamepadEvent) {
-			log.info("Gamepad event: {}", gamepadEvent);
-		}
 		if (event instanceof Keyboard.KeyEvent keyEvent) {
 			if (keyEvent.key() == Keyboard.Key.F11 && keyEvent.value()) {
 				currentVideoMode = (currentVideoMode + 1) % videoModes.length;

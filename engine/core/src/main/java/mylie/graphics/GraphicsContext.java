@@ -1,11 +1,14 @@
 package mylie.graphics;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import lombok.AccessLevel;
 import lombok.Getter;
 import mylie.async.*;
 import mylie.core.components.Scheduler;
+import mylie.graphics.managers.RenderTarget;
 import mylie.util.configuration.Configurable;
 import mylie.util.properties.PropertiesAA;
 import mylie.util.properties.Property;
@@ -33,9 +36,16 @@ public abstract class GraphicsContext
 	@Getter(AccessLevel.PROTECTED)
 	private final GraphicsContext primaryContext;
 
+	private final GraphicsCapabilities capabilities=new GraphicsCapabilities();
+	@Getter(AccessLevel.PROTECTED)
+	private final List<ApiFeature> apiFeatures=new ArrayList<>();
+	@Getter(AccessLevel.PROTECTED)
+	private final List<ApiManager> apiManagers=new ArrayList<>();
 	private final ManagedThread contextThread;
 	private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 	private final Target target = new Target("GraphicsContext<" + ++contextCount + ">");
+	@Getter(AccessLevel.PUBLIC)
+	private final RenderTarget renderTarget=RenderTarget.Output;
 
 	public GraphicsContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext,
 			Scheduler scheduler) {
@@ -71,6 +81,24 @@ public abstract class GraphicsContext
 	 *         swap operation.
 	 */
 	public abstract Result<Async.Void> swapBuffers();
+
+	<T extends ApiFeature> T api(Class<T> apiFeatureClass) {
+		for (ApiFeature apiFeature : apiFeatures) {
+			if(apiFeatureClass.isAssignableFrom(apiFeature.getClass())) {
+				return apiFeatureClass.cast(apiFeature);
+			}
+		}
+		return null;
+	}
+
+	public <T extends ApiManager> T manager(Class<T> apiManagerClass) {
+		for (ApiManager apiManager : apiManagers) {
+			if(apiManagerClass.isAssignableFrom(apiManager.getClass())) {
+				return apiManagerClass.cast(apiManager);
+			}
+		}
+		return null;
+	}
 
 	public static class Option<T> extends mylie.util.configuration.Option<GraphicsContext, T> {
 		public Option(String name, T defaultValue) {

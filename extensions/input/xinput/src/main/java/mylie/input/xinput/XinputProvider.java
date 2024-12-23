@@ -32,15 +32,13 @@ public class XinputProvider extends AppComponentParallel implements AppComponent
 
 	@Override
 	public void onInit() {
-		log.info("Loading XInput");
 		try {
 			XInputDevice14[] allDevices1 = XInputDevice14.getAllDevices();
-			log.error("Xinput 14 {}", XInputDevice14.isAvailable());
 			XInputDevice[] allDevices = XInputDevice.getAllDevices();
 			for (int i = 0; i < allDevices.length; i++) {
 				gamepads.add(new XInputGamepad(i, allDevices[i]));
 			}
-			log.info("Loaded {} gamepads", gamepads.size());
+			log.trace("Loaded {} gamepads", gamepads.size());
 			component(InputManager.class).addInputProvider(this);
 		} catch (XInputNotLoadedException e) {
 			throw new RuntimeException(e);

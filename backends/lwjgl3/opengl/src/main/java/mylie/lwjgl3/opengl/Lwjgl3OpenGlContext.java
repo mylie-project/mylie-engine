@@ -10,6 +10,7 @@ import mylie.core.components.Scheduler;
 import mylie.graphics.GraphicsContext;
 import mylie.graphics.GraphicsContextConfiguration;
 import mylie.lwjgl3.glfw.GlfwContext;
+import mylie.lwjgl3.opengl.api.Lwjgl3GlGet;
 import org.lwjgl.opengl.*;
 
 @Slf4j
@@ -19,6 +20,7 @@ public class Lwjgl3OpenGlContext extends GlfwContext implements GLDebugMessageCa
 	public Lwjgl3OpenGlContext(GraphicsContextConfiguration configuration, GraphicsContext primaryContext,
 			Scheduler scheduler) {
 		super(configuration, primaryContext, scheduler);
+		apiFeatures().add(new Lwjgl3GlGet());
 	}
 
 	public void createGlCapabilities() {
