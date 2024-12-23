@@ -10,7 +10,7 @@ import mylie.graphics.opengl.api.GlRenderTarget;
 
 public class GlRenderTargetManager implements RenderTargetManager {
     GlRenderTarget glRenderTargetBase;
-    final NativeData.NonSharedData<RenderTarget> renderTargetHandles;
+    final NativeData.NonSharedData<RenderTarget,RenderTargetHandle> renderTargetHandles;
 
     public GlRenderTargetManager() {
         renderTargetHandles = new NativeData.NonSharedData<>();
@@ -60,9 +60,9 @@ public class GlRenderTargetManager implements RenderTargetManager {
 
     void bindRenderTargetInternal(
             RenderTask renderTask, RenderTarget renderTarget, RenderTarget.BindingMode bindingMode) {
-        NativeData.NonSharedData.Handle renderTargetHandle = renderTargetHandles.get(renderTask.context(), renderTarget);
+        RenderTargetHandle renderTargetHandle = renderTargetHandles.get(renderTask.context(), renderTarget);
         if (renderTargetHandle == null) {
-            renderTargetHandle = new NativeData.NonSharedData.Handle();
+            renderTargetHandle = new RenderTargetHandle();
             renderTargetHandles.put(renderTask.context(), renderTarget, renderTargetHandle);
             if (renderTarget != renderTask.context().renderTarget()) {
                 glRenderTargetBase.createRenderTarget(renderTargetHandle);
@@ -71,5 +71,9 @@ public class GlRenderTargetManager implements RenderTargetManager {
             }
         }
         glRenderTargetBase.bindRenderTarget(renderTargetHandle, bindingMode);
+    }
+
+    private static class RenderTargetHandle extends NativeData.NonSharedData.Handle{
+
     }
 }

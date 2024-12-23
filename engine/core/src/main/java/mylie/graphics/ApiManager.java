@@ -7,4 +7,8 @@ public interface ApiManager {
         return context.api(apiClass);
     }
 
+    default <T extends ApiManager> T manager(Class<T> managerClass,GraphicsContext context) {
+        return context.manager(managerClass);
+    }
+
 }

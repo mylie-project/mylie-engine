@@ -15,26 +15,26 @@ public class NativeData {
     @Getter
     @Setter
     public abstract static class Handle {
-        long version;
+        long version=-1;
         public abstract int handle();
         public abstract void handle(int handle);
     }
 
     @Slf4j
-    public static class NonSharedData<T> {
-        private final Map<GraphicsContext, Map<T, Handle>> data;
+    public static class NonSharedData<T,H extends Handle> {
+        private final Map<GraphicsContext, Map<T, H>> data;
 
         public NonSharedData() {
             data = new ConcurrentHashMap<>();
         }
 
-        public Handle get(GraphicsContext context, T key) {
-            Map<T, Handle> thMap = data.computeIfAbsent(context, k -> new ConcurrentHashMap<>());
+        public H get(GraphicsContext context, T key) {
+            Map<T, H> thMap = data.computeIfAbsent(context, k -> new ConcurrentHashMap<>());
             return thMap.get(key);
         }
 
-        public void put(GraphicsContext context, T key, Handle value) {
-            Map<T, Handle> thMap = data.computeIfAbsent(context, k -> new WeakHashMap<>());
+        public void put(GraphicsContext context, T key, H value) {
+            Map<T, H> thMap = data.computeIfAbsent(context, k -> new WeakHashMap<>());
             thMap.put(key, value);
         }
 
@@ -53,18 +53,18 @@ public class NativeData {
         }
     }
 
-    public static class SharedData<T> {
-        private final Map<T, Handle> data;
+    public static class SharedData<T,H extends Handle> {
+        private final Map<T, H> data;
 
         public SharedData() {
             data=new WeakHashMap<>();
         }
 
-        public Handle get(T key) {
+        public H get(T key) {
             return data.get(key);
         }
 
-        public void put(T key, Handle value) {
+        public void put(T key, H value) {
             data.put(key, value);
         }
 

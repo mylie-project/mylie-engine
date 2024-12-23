@@ -8,6 +8,10 @@ import mylie.graphics.GraphicsContext;
 import mylie.graphics.GraphicsContextConfiguration;
 import mylie.graphics.GraphicsManager;
 import mylie.graphics.RenderTask;
+import mylie.graphics.geometry.VertexDataLayouts;
+import mylie.graphics.geometry.VertexDataPoints;
+import mylie.graphics.geometry.meshes.Cube;
+import mylie.graphics.managers.MeshManager;
 import mylie.graphics.managers.RenderTarget;
 import mylie.graphics.managers.RenderTargetManager;
 import mylie.gui.imgui.ControlPanel;
@@ -22,6 +26,7 @@ import mylie.lwjgl3.opengl.Lwjgl3OpenGlSettings;
 import mylie.platform.desktop.Desktop;
 import mylie.util.versioned.Versioned;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 
 @Slf4j
 public class HelloEngine extends BaseApplication implements RawInputListener {
@@ -32,6 +37,9 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 	int currentVideoMode = 0;
 	GraphicsContext context;
 	Versioned.Reference<Boolean> escapeKey;
+
+	private Cube cube=new Cube(VertexDataLayouts.Unshaded);
+
 	public static void main(String[] args) {
 		EngineConfiguration configuration = Platform.initialize(new Desktop());
 		configuration.option(Engine.Options.Application, new HelloEngine());
@@ -67,7 +75,11 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 			component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("Escape pressed"));
 		}
 		RenderTask renderTask = new RenderTask(context);
+		if(time.version()%2==0){
+			cube.vertexData(VertexDataPoints.Position,1,new Vector3f(0,0,0));
+		}
 		context.manager(RenderTargetManager.class).clearRenderTarget(renderTask,context.renderTarget(), RenderTarget.ClearOperation.Default);
+		context.manager(MeshManager.class).bindMesh(renderTask, cube);
 		renderTask.submit();
 	}
 

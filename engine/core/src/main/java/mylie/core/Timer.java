@@ -12,7 +12,7 @@ import mylie.util.versioned.Versioned;
 public abstract class Timer implements CoreComponent {
 
 	@Getter
-	private final Versioned<Time> time = new AutoIncremented<>();
+	public static final Versioned<Time> time = new AutoIncremented<>();
 
 	@Getter(AccessLevel.PROTECTED)
 	private final Settings settings;
