@@ -1,7 +1,6 @@
 package mylie.graphics.opengl.api;
 
 import mylie.graphics.NativeData;
-import mylie.graphics.RenderTask;
 import mylie.graphics.managers.RenderTarget;
 import mylie.graphics.opengl.BindingState;
 import mylie.graphics.opengl.GlApiFeature;

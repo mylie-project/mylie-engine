@@ -1,5 +1,7 @@
 package mylie.graphics.opengl.managers;
 
+import java.util.HashSet;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import mylie.graphics.Datatypes;
 import mylie.graphics.GraphicsContext;
@@ -10,9 +12,6 @@ import mylie.graphics.geometry.VertexDataLayouts;
 import mylie.graphics.geometry.VertexDataPoints;
 import mylie.graphics.managers.MeshManager;
 import mylie.graphics.opengl.api.GlVao;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Slf4j
 public class GlMeshManager implements MeshManager {
@@ -32,17 +31,18 @@ public class GlMeshManager implements MeshManager {
 			VertexDataLayouts.VertexDataLayout vertexDataLayout = getVertexDataLayout(mesh);
 			for (VertexDataPoints.VertexDataPoint<?> dataPoint : vertexDataLayout.dataPoints()) {
 				Datatypes.DataBuffer<?> dataBuffer = getDataBuffer(mesh, dataPoint);
-				boolean enableAttribute=false;
-				if(!handle.activeDataPoints.contains(dataPoint)){
-					bufferManager.bindBuffer(renderTask,dataBuffer,GlBufferManager.Target.Array,GlBufferManager.AccessMode.StaticDraw);
-					enableAttribute=true;
-				}else{
+				boolean enableAttribute = false;
+				if (!handle.activeDataPoints.contains(dataPoint)) {
+					bufferManager.bindBuffer(renderTask, dataBuffer, GlBufferManager.Target.Array,
+							GlBufferManager.AccessMode.StaticDraw);
+					enableAttribute = true;
+				} else {
 					if (bufferManager.checkBindBuffer(renderTask, dataBuffer, GlBufferManager.Target.Array,
 							GlBufferManager.AccessMode.StaticDraw)) {
-						enableAttribute=true;
+						enableAttribute = true;
 					}
 				}
-				if(enableAttribute) {
+				if (enableAttribute) {
 					handle.activeDataPoints.add(dataPoint);
 					renderTask.subTask(() -> {
 						glVao.attribPointer(dataPoint.bindingPoint(), dataPoint.dataType(), false, 0, 0);
@@ -65,6 +65,6 @@ public class GlMeshManager implements MeshManager {
 	}
 
 	public static class VaoHandle extends NativeData.NonSharedData.Handle {
-		Set<VertexDataPoints.VertexDataPoint<?>> activeDataPoints=new HashSet<>();
+		Set<VertexDataPoints.VertexDataPoint<?>> activeDataPoints = new HashSet<>();
 	}
 }

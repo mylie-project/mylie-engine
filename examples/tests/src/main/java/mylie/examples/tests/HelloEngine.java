@@ -90,9 +90,9 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		component(InputManager.class).addInputListener(this);
 		escapeKey = component(InputManager.class).keyboard().keyReference(Keyboard.Key.ESCAPE);
 		component(new XinputProvider());
-		 ImGui imGui = new ImGui();
-		 component(imGui);
-		 imGui.component(new ControlPanel(2), context);
+		ImGui imGui = new ImGui();
+		component(imGui);
+		imGui.component(new ControlPanel(2), context);
 		RenderTask renderTask = new RenderTask(context);
 		renderTask.subTask(() -> {
 			programId = GL20.glCreateProgram();
@@ -134,14 +134,14 @@ public class HelloEngine extends BaseApplication implements RawInputListener {
 		if (escapeKey.value()) {
 			component(EngineManager.class).shutdown(new Engine.ShutdownReason.User("Escape pressed"));
 		}
-		render(context,programId);
-		//if(time.version()>4) {
-			render(context2, programId2);
-		//}
+		render(context, programId);
+		// if(time.version()>4) {
+		render(context2, programId2);
+		// }
 		// renderTask2.submit();
 	}
 
-	private void render(GraphicsContext theContext,int id) {
+	private void render(GraphicsContext theContext, int id) {
 		RenderTask renderTask = new RenderTask(theContext);
 		Vector2ic property = theContext.property(GraphicsContext.Properties.FrameBufferSize);
 

@@ -36,9 +36,9 @@ public class GlRenderTargetManager implements RenderTargetManager {
 				bitmask |= 1024;
 			}
 		}
-		final int finalMask=bitmask;
+		final int finalMask = bitmask;
 		bindRenderTarget(renderTask, renderTarget, RenderTarget.BindingMode.Write);
-		renderTask.subTask(()-> {
+		renderTask.subTask(() -> {
 			glRenderTargetBase.setClearColor(clearOperation.color());
 			glRenderTargetBase.clearOperation(finalMask);
 		});
@@ -50,12 +50,12 @@ public class GlRenderTargetManager implements RenderTargetManager {
 		RenderTargetHandle renderTargetHandle = renderTargetHandles.get(renderTask.context(), renderTarget);
 		if (renderTargetHandle.handle() == -1) {
 			if (renderTarget != renderTask.context().renderTarget()) {
-				renderTask.subTask(()->glRenderTargetBase.createRenderTarget(renderTargetHandle));
+				renderTask.subTask(() -> glRenderTargetBase.createRenderTarget(renderTargetHandle));
 			} else {
 				renderTargetHandle.handle(0);
 			}
 		}
-		renderTask.subTask(()->glRenderTargetBase.bindRenderTarget(renderTargetHandle, bindingMode));
+		renderTask.subTask(() -> glRenderTargetBase.bindRenderTarget(renderTargetHandle, bindingMode));
 	}
 
 	private static class RenderTargetHandle extends NativeData.NonSharedData.Handle {
