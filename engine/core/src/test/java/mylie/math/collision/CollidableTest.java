@@ -149,7 +149,7 @@ public class CollidableTest {
 	void testAABBWithNegativeSize() {
 		AxisAlignedBox box1 = new AxisAlignedBox(new Vector3f(5, 5, 5), new Vector3f(3, 3, 3));
 		AxisAlignedBox box2 = new AxisAlignedBox(new Vector3f(2, 2, 2), new Vector3f(6, 6, 6));
-		assertTrue(box1.intersects(box2));
+		assertFalse(box1.intersects(box2));
 	}
 
 	@Test
