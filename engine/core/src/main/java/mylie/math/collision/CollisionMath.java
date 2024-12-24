@@ -4,9 +4,18 @@ import org.joml.Intersectionf;
 
 public class CollisionMath {
 	public static boolean intersects(Sphere sphere1, Sphere sphere2) {
-		return Intersectionf.testSphereSphere(sphere1.center(), sphere1.radiusSquared(), sphere2.center(),
-				sphere2.radiusSquared());
+		float distanceSquared = sphere1.center().distanceSquared(sphere2.center());
+		float radiusSum = sphere1.radius() + sphere2.radius();
+		return distanceSquared <= radiusSum * radiusSum;
 	}
+
+	/**
+	 * return Intersectionf.testSphereSphere(sphere1.center(), sphere1.radiusSquared(), sphere2.center(),
+	 * 				sphere2.radiusSquared());
+	 * @param box1
+	 * @param box2
+	 * @return
+	 */
 
 	public static boolean intersects(AxisAlignedBox box1, AxisAlignedBox box2) {
 		return Intersectionf.testAabAab(box1.min(), box1.max(), box2.min(), box2.max());
